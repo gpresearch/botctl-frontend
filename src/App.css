@@ -120,3 +120,49 @@ tr.selected {
 .sell {
   color: #dc3545;
 }
+
+/* ModifyBots styles */
+.modify-bots {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.modify-bots h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.edit-input {
+  width: 100px;
+  padding: 0.25rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.save-button {
+  background: #28a745;
+}
+
+.save-button:hover {
+  background: #218838;
+}
+
+.cancel-button {
+  background: #6c757d;
+}
+
+.cancel-button:hover {
+  background: #5a6268;
+}
+
+.edit-button:hover {
+  background: #0056b3;
+}

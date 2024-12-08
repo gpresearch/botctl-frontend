@@ -21,6 +21,7 @@ export interface Bot {
   id: string;
   config: LimitQuoterConfig;
   status: 'ACTIVE' | 'STOPPED';
+  orders: Order[];
 }
 
 export interface Order {

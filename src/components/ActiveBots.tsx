@@ -1,7 +1,7 @@
 // Import required dependencies from React and custom types/API functions
 import React, { useState, useEffect } from 'react';
-import { Bot, Order } from '../types';
-import { getBotStatus, getBotOrders, stopBots } from '../api';
+import { Bot } from '../types';
+import { stopBots, getActiveBots } from '../api';
 
 // Define the props interface for the ActiveBots component
 interface ActiveBotsProps {
@@ -13,15 +13,15 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
   // State management using React hooks
   const [bots, setBots] = useState<Bot[]>([]); // Store list of bots
   const [selectedBotId, setSelectedBotId] = useState<string | null>(null); // Currently selected bot
-  const [orders, setOrders] = useState<Order[]>([]); // Orders for selected bot
+//   const [orders, setOrders] = useState<Order[]>([]); // Orders for selected bot
   const [selectedBotIds, setSelectedBotIds] = useState<Set<string>>(new Set()); // Bots selected for bulk actions
 
   // Effect hook to fetch and update bot statuses periodically
   useEffect(() => {
     const fetchBots = async () => {
-      const botPromises = botIds.map(id => getBotStatus(id));
-      const fetchedBots = await Promise.all(botPromises);
-      setBots(fetchedBots);
+      console.log("Fuck")
+      const activeBots = await getActiveBots();
+      setBots(activeBots);
     };
 
     fetchBots(); // Initial fetch
@@ -29,19 +29,19 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
     return () => clearInterval(interval); // Cleanup on unmount
   }, [botIds]);
 
-  // Effect hook to fetch and update orders for selected bot
-  useEffect(() => {
-    const fetchOrders = async () => {
-      if (selectedBotId) {
-        const fetchedOrders = await getBotOrders(selectedBotId);
-        setOrders(fetchedOrders);
-      }
-    };
+//   // Effect hook to fetch and update orders for selected bot
+//   useEffect(() => {
+//     const fetchOrders = async () => {
+//       if (selectedBotId) {
+//         const fetchedOrders = await getActiveBots(selectedBotId);
+//         setOrders(fetchedOrders);
+//       }
+//     };
 
-    fetchOrders(); // Initial fetch
-    const interval = setInterval(fetchOrders, 2000); // Refresh every 2 seconds
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [selectedBotId]);
+//     fetchOrders(); // Initial fetch
+//     const interval = setInterval(fetchOrders, 2000); // Refresh every 2 seconds
+//     return () => clearInterval(interval); // Cleanup on unmount
+//   }, [selectedBotId]);
 
   // Handler for when a bot row is clicked
   const handleBotSelect = (botId: string) => {
@@ -89,6 +89,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
           <thead>
             <tr>
               <th></th>
+              <th>Bot ID</th>
               <th>Exchange</th>
               <th>Instrument</th>
               <th>Reference Price</th>
@@ -111,6 +112,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
                     onClick={(e) => e.stopPropagation()} // Prevent row selection when clicking checkbox
                   />
                 </td>
+                <td>{bot.id}</td>
                 <td>{bot.config.exchange}</td>
                 <td>{`${bot.config.instrument.base}/${bot.config.instrument.quote}`}</td>
                 <td>{bot.config.ref_price}</td>
@@ -137,15 +139,17 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
               </tr>
             </thead>
             <tbody>
-              {orders.map(order => (
-                <tr key={order.id}>
-                  <td className={order.side.toLowerCase()}>{order.side}</td>
-                  <td>{order.price}</td>
-                  <td>{order.size}</td>
-                  <td>{order.status}</td>
-                  <td>{new Date(order.timestamp).toLocaleString()}</td>
-                </tr>
-              ))}
+              {bots
+                .find(bot => bot.id === selectedBotId)
+                ?.orders.map(order => (
+                  <tr key={order.id}>
+                    <td className={order.side.toLowerCase()}>{order.side}</td>
+                    <td>{order.price}</td>
+                    <td>{order.size}</td>
+                    <td>{order.status}</td>
+                    <td>{new Date(order.timestamp).toLocaleString()}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

@@ -19,21 +19,11 @@ export async function createBot(config: LimitQuoterConfig): Promise<string> {
   return data.bot_id;
 }
 
-export async function getBotStatus(botId: string): Promise<Bot> {
-  const response = await fetch(`${API_BASE_URL}/status/${botId}`);
+export async function getActiveBots(): Promise<Bot[]> {
+  const response = await fetch(`${API_BASE_URL}/active_bots`);
   
   if (!response.ok) {
     throw new Error('Failed to get bot status');
-  }
-
-  return response.json();
-}
-
-export async function getBotOrders(botId: string): Promise<Order[]> {
-  const response = await fetch(`${API_BASE_URL}/orders/${botId}`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to get bot orders');
   }
 
   return response.json();
@@ -50,5 +40,28 @@ export async function stopBots(botIds: string[]): Promise<void> {
 
   if (!response.ok) {
     throw new Error('Failed to stop bots');
+  }
+}
+
+export interface ModifyBotParams {
+  ref_price: number;
+  bid_bps_away_from_ref: number;
+  ask_bps_away_from_ref: number;
+}
+
+export async function modifyBot(botId: string, params: ModifyBotParams): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/modify`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      bot_id: botId,
+      ...params,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to modify bot');
   }
 } 

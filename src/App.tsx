@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { CreateBotForm } from './components/CreateBotForm'
 import { ActiveBots } from './components/ActiveBots'
+import { ModifyBots } from './components/ModifyBots'
 import './App.css'
 
 // Main App component that handles the trading bot UI
@@ -10,7 +11,7 @@ function App() {
   const [activeBotIds, setActiveBotIds] = useState<string[]>([])
   
   // State to control which tab is currently visible (create new bot or view active bots)
-  const [activeTab, setActiveTab] = useState<'create' | 'active'>('create')
+  const [activeTab, setActiveTab] = useState<'create' | 'active' | 'modify'>('create')
 
   // Handler called when a new bot is created - switches view to active bots tab
   const handleBotCreated = () => {
@@ -36,23 +37,28 @@ function App() {
           >
             Active Bots
           </button>
+          <button
+            className={activeTab === 'modify' ? 'active' : 'active'}
+            onClick={() => setActiveTab('modify')}
+          >
+            Modify Bots
+          </button>
         </nav>
       </header>
 
       {/* Main content area */}
       <main>
-        {/* Both sections are always rendered, with CSS controlling visibility */}
-        <div style={{ display: activeTab === 'create' ? 'block' : 'none' }}>
-          <CreateBotForm onBotCreated={handleBotCreated} />
-        </div>
-        <div style={{ display: activeTab === 'active' ? 'block' : 'none' }}>
+        {/* Conditionally render components based on active tab */}
+        {activeTab === 'create' && <CreateBotForm onBotCreated={handleBotCreated} />}
+        {activeTab === 'active' && (
           <ActiveBots
             botIds={activeBotIds}
             onBotsUpdated={() => setActiveBotIds(prevIds => 
               prevIds.filter(id => !document.querySelector(`input[data-bot-id="${id}"]:checked`))
             )}
           />
-        </div>
+        )}
+        {activeTab === 'modify' && <ModifyBots botIds={activeBotIds} />}
       </main>
     </div>
   )
