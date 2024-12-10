@@ -1,8 +1,8 @@
-import { LimitQuoterConfig, Bot, Order } from './types';
+import { BotConfig, Bot, Order } from './types';
 
 const API_BASE_URL = 'http://localhost:8000'; // Adjust this to match your backend URL
 
-export async function createBot(config: LimitQuoterConfig): Promise<string> {
+export async function createBot(config: BotConfig): Promise<string> {
   const response = await fetch(`${API_BASE_URL}/create`, {
     method: 'POST',
     headers: {
@@ -20,13 +20,13 @@ export async function createBot(config: LimitQuoterConfig): Promise<string> {
 }
 
 export async function getActiveBots(): Promise<Bot[]> {
-  const response = await fetch(`${API_BASE_URL}/active_bots`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to get bot status');
-  }
-
-  return response.json();
+    console.log("Getting actie bots");
+    const response = await fetch(`${API_BASE_URL}/active_bots`);
+    
+    if (!response.ok) {
+        throw new Error('Failed to get bot status');
+    }
+    return response.json();
 }
 
 export async function stopBots(botIds: string[]): Promise<void> {
@@ -44,9 +44,8 @@ export async function stopBots(botIds: string[]): Promise<void> {
 }
 
 export interface ModifyBotParams {
-  ref_price: number;
-  bid_bps_away_from_ref: number;
-  ask_bps_away_from_ref: number;
+  field: string;
+  value: number;
 }
 
 export async function modifyBot(botId: string, params: ModifyBotParams): Promise<void> {

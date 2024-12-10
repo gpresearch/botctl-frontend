@@ -2,7 +2,6 @@
 import { useState } from 'react'
 import { CreateBotForm } from './components/CreateBotForm'
 import { ActiveBots } from './components/ActiveBots'
-import { ModifyBots } from './components/ModifyBots'
 import './App.css'
 
 // Main App component that handles the trading bot UI
@@ -11,7 +10,7 @@ function App() {
   const [activeBotIds, setActiveBotIds] = useState<string[]>([])
   
   // State to control which tab is currently visible (create new bot or view active bots)
-  const [activeTab, setActiveTab] = useState<'create' | 'active' | 'modify'>('create')
+  const [activeTab, setActiveTab] = useState<'create' | 'active'>('create')
 
   // Handler called when a new bot is created - switches view to active bots tab
   const handleBotCreated = () => {
@@ -37,12 +36,6 @@ function App() {
           >
             Active Bots
           </button>
-          <button
-            className={activeTab === 'modify' ? 'active' : 'active'}
-            onClick={() => setActiveTab('modify')}
-          >
-            Modify Bots
-          </button>
         </nav>
       </header>
 
@@ -58,7 +51,6 @@ function App() {
             )}
           />
         )}
-        {activeTab === 'modify' && <ModifyBots botIds={activeBotIds} />}
       </main>
     </div>
   )

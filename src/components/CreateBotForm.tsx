@@ -1,24 +1,69 @@
 import React, { useState } from 'react';
-import { ExchangeNames, LimitQuoterConfig } from '../types';
+import { 
+  ExchangeNames, 
+  StrategyType,
+  LimitQuoterConfig,
+  RealQuoterConfig,
+  TWAPConfig,
+  BasicQuoterConfig,
+  BotConfig
+} from '../types';
 import { createBot } from '../api';
 
 interface CreateBotFormProps {
   onBotCreated: () => void;
 }
 
-export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
-  const [config, setConfig] = useState<LimitQuoterConfig>({
-    exchange: ExchangeNames.BINANCE,
-    instrument: { base: '', quote: '' },
+const defaultBaseConfig = {
+  exchange: ExchangeNames.BINANCE,
+  instrument: { base: '', quote: '' }
+};
+
+const defaultConfigs = {
+  [StrategyType.LimitQuoter]: {
+    ...defaultBaseConfig,
     ref_price: 0,
     bid_bps_away_from_ref: 0,
     ask_bps_away_from_ref: 0,
-  });
+  },
+  [StrategyType.RealQuoter]: {
+    ...defaultBaseConfig,
+    quote_interval_ms: 1000,
+    max_position_size: 1.0,
+    volatility_threshold: 0.02,
+  },
+  [StrategyType.TWAP]: {
+    ...defaultBaseConfig,
+    target_size: 1.0,
+    time_window_seconds: 3600,
+    max_participation_rate: 0.1,
+  },
+  [StrategyType.BasicQuoter]: {
+    ...defaultBaseConfig,
+    spread_bps: 10,
+    order_refresh_seconds: 5,
+    position_limit: 1.0,
+  },
+};
+
+export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
+  const [strategyType, setStrategyType] = useState<StrategyType>(StrategyType.LimitQuoter);
+  const [config, setConfig] = useState<any>(defaultConfigs[StrategyType.LimitQuoter]);
+
+  const handleStrategyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newType = e.target.value as StrategyType;
+    setStrategyType(newType);
+    setConfig(defaultConfigs[newType]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createBot(config);
+      const botConfig: BotConfig = {
+        type: strategyType,
+        config: config
+      };
+      await createBot(botConfig);
       onBotCreated();
     } catch (error) {
       console.error('Failed to create bot:', error);
@@ -26,15 +71,160 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
     }
   };
 
+  const renderStrategySpecificFields = () => {
+    switch (strategyType) {
+      case StrategyType.LimitQuoter:
+        return (
+          <>
+            <div className="form-group">
+              <label>Reference Price:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.ref_price}
+                onChange={(e) => setConfig({ ...config, ref_price: parseFloat(e.target.value) })}
+              />
+            </div>
+            <div className="form-group">
+              <label>Bid BPS Away:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.bid_bps_away_from_ref}
+                onChange={(e) => setConfig({ ...config, bid_bps_away_from_ref: parseFloat(e.target.value) })}
+              />
+            </div>
+            <div className="form-group">
+              <label>Ask BPS Away:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.ask_bps_away_from_ref}
+                onChange={(e) => setConfig({ ...config, ask_bps_away_from_ref: parseFloat(e.target.value) })}
+              />
+            </div>
+          </>
+        );
+
+      case StrategyType.RealQuoter:
+        return (
+          <>
+            <div className="form-group">
+              <label>Quote Interval (ms):</label>
+              <input
+                type="number"
+                value={config.quote_interval_ms}
+                onChange={(e) => setConfig({ ...config, quote_interval_ms: parseInt(e.target.value) })}
+              />
+            </div>
+            <div className="form-group">
+              <label>Max Position Size:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.max_position_size}
+                onChange={(e) => setConfig({ ...config, max_position_size: parseFloat(e.target.value) })}
+              />
+            </div>
+            <div className="form-group">
+              <label>Volatility Threshold:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.volatility_threshold}
+                onChange={(e) => setConfig({ ...config, volatility_threshold: parseFloat(e.target.value) })}
+              />
+            </div>
+          </>
+        );
+
+      case StrategyType.TWAP:
+        return (
+          <>
+            <div className="form-group">
+              <label>Target Size:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.target_size}
+                onChange={(e) => setConfig({ ...config, target_size: parseFloat(e.target.value) })}
+              />
+            </div>
+            <div className="form-group">
+              <label>Time Window (seconds):</label>
+              <input
+                type="number"
+                value={config.time_window_seconds}
+                onChange={(e) => setConfig({ ...config, time_window_seconds: parseInt(e.target.value) })}
+              />
+            </div>
+            <div className="form-group">
+              <label>Max Participation Rate:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.max_participation_rate}
+                onChange={(e) => setConfig({ ...config, max_participation_rate: parseFloat(e.target.value) })}
+              />
+            </div>
+          </>
+        );
+
+      case StrategyType.BasicQuoter:
+        return (
+          <>
+            <div className="form-group">
+              <label>Spread BPS:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.spread_bps}
+                onChange={(e) => setConfig({ ...config, spread_bps: parseFloat(e.target.value) })}
+              />
+            </div>
+            <div className="form-group">
+              <label>Order Refresh (seconds):</label>
+              <input
+                type="number"
+                value={config.order_refresh_seconds}
+                onChange={(e) => setConfig({ ...config, order_refresh_seconds: parseInt(e.target.value) })}
+              />
+            </div>
+            <div className="form-group">
+              <label>Position Limit:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.position_limit}
+                onChange={(e) => setConfig({ ...config, position_limit: parseFloat(e.target.value) })}
+              />
+            </div>
+          </>
+        );
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="create-bot-form">
       <h2>Create New Bot</h2>
+
+      <div className="form-group">
+        <label>Strategy Type:</label>
+        <select
+          value={strategyType}
+          onChange={handleStrategyChange}
+        >
+          {Object.values(StrategyType).map((type) => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </select>
+      </div>
       
       <div className="form-group">
         <label>Exchange:</label>
         <select
           value={config.exchange}
-          onChange={(e) => setConfig({ ...config, exchange: e.target.value as ExchangeNames })}
+          onChange={(e) => setConfig({ ...config, exchange: e.target.value })}
         >
           {Object.values(ExchangeNames).map((exchange) => (
             <option key={exchange} value={exchange}>{exchange}</option>
@@ -68,37 +258,9 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
         />
       </div>
 
-      <div className="form-group">
-        <label>Reference Price:</label>
-        <input
-          type="number"
-          step="any"
-          value={config.ref_price}
-          onChange={(e) => setConfig({ ...config, ref_price: parseFloat(e.target.value) })}
-        />
-      </div>
-
-      <div className="form-group">
-        <label>Bid BPS Away:</label>
-        <input
-          type="number"
-          step="any"
-          value={config.bid_bps_away_from_ref}
-          onChange={(e) => setConfig({ ...config, bid_bps_away_from_ref: parseFloat(e.target.value) })}
-        />
-      </div>
-
-      <div className="form-group">
-        <label>Ask BPS Away:</label>
-        <input
-          type="number"
-          step="any"
-          value={config.ask_bps_away_from_ref}
-          onChange={(e) => setConfig({ ...config, ask_bps_away_from_ref: parseFloat(e.target.value) })}
-        />
-      </div>
+      {renderStrategySpecificFields()}
 
       <button type="submit">Create Bot</button>
     </form>
   );
-} 
+}
