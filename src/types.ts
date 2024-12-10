@@ -10,11 +10,10 @@ export interface Instrument {
 }
 
 export enum StrategyType {
-  LimitQuoter = 'LimitQuoter',
-  RealQuoter = 'RealQuoter',
-  TEST = 'test',
-  TWAP = 'TWAP',
-  BasicQuoter = 'BasicQuoter'
+  LIMIT_QUOTER = 'limit_quoter',
+  REAL_QUOTER = 'real_quoter',
+//   TWAP = 'TWAP',
+  BASIC_QUOTER = 'basic_quoter'
 }
 
 // Base config interface that all strategies share
@@ -48,11 +47,10 @@ export interface BasicQuoterConfig extends BaseConfig {
 }
 
 export type BotConfig = 
-  | { type: StrategyType.LimitQuoter; config: LimitQuoterConfig }
-  | { type: StrategyType.RealQuoter; config: RealQuoterConfig }
-  | { type: StrategyType.TWAP; config: TWAPConfig }
-  | { type: StrategyType.BasicQuoter; config: BasicQuoterConfig }
-  | { type: StrategyType.TEST; config: RealQuoterConfig };
+  | { type: StrategyType.LIMIT_QUOTER; config: LimitQuoterConfig }
+  | { type: StrategyType.REAL_QUOTER; config: RealQuoterConfig }
+//   | { type: StrategyType.TWAP; config: TWAPConfig }
+  | { type: StrategyType.BASIC_QUOTER; config: BasicQuoterConfig }
 
 export interface Bot {
   id: string;

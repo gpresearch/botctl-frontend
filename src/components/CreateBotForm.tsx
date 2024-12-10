@@ -20,41 +20,35 @@ const defaultBaseConfig = {
 };
 
 const defaultConfigs = {
-  [StrategyType.LimitQuoter]: {
+  [StrategyType.LIMIT_QUOTER]: {
     ...defaultBaseConfig,
     ref_price: 0,
     bid_bps_away_from_ref: 0,
     ask_bps_away_from_ref: 0,
   },
-  [StrategyType.RealQuoter]: {
+  [StrategyType.REAL_QUOTER]: {
     ...defaultBaseConfig,
     quote_interval_ms: 1000,
     max_position_size: 1.0,
     volatility_threshold: 0.02,
   },
-  [StrategyType.TWAP]: {
-    ...defaultBaseConfig,
-    target_size: 1.0,
-    time_window_seconds: 3600,
-    max_participation_rate: 0.1,
-  },
-  [StrategyType.BasicQuoter]: {
+//   [StrategyType.TWAP]: {
+//     ...defaultBaseConfig,
+//     target_size: 1.0,
+//     time_window_seconds: 3600,
+//     max_participation_rate: 0.1,
+//   },
+  [StrategyType.BASIC_QUOTER]: {
     ...defaultBaseConfig,
     spread_bps: 10,
     order_refresh_seconds: 5,
     position_limit: 1.0,
   },
-  [StrategyType.TEST]: {
-    ...defaultBaseConfig,
-    quote_interval_ms: 1000,
-    max_position_size: 1.0,
-    volatility_threshold: 0.02,
-  },
 };
 
 export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
-  const [strategyType, setStrategyType] = useState<StrategyType>(StrategyType.LimitQuoter);
-  const [config, setConfig] = useState<any>(defaultConfigs[StrategyType.LimitQuoter]);
+  const [strategyType, setStrategyType] = useState<StrategyType>(StrategyType.LIMIT_QUOTER);
+  const [config, setConfig] = useState<any>(defaultConfigs[StrategyType.LIMIT_QUOTER]);
 
   const handleStrategyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = e.target.value as StrategyType;
@@ -79,7 +73,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
 
   const renderStrategySpecificFields = () => {
     switch (strategyType) {
-      case StrategyType.LimitQuoter:
+      case StrategyType.LIMIT_QUOTER:
         return (
           <>
             <div className="form-group">
@@ -112,7 +106,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
           </>
         );
 
-      case StrategyType.RealQuoter:
+      case StrategyType.REAL_QUOTER:
         return (
           <>
             <div className="form-group">
@@ -176,7 +170,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
           </>
         );
 
-      case StrategyType.BasicQuoter:
+      case StrategyType.BASIC_QUOTER:
         return (
           <>
             <div className="form-group">
