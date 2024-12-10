@@ -12,6 +12,7 @@ export interface Instrument {
 export enum StrategyType {
   LimitQuoter = 'LimitQuoter',
   RealQuoter = 'RealQuoter',
+  TEST = 'test',
   TWAP = 'TWAP',
   BasicQuoter = 'BasicQuoter'
 }
@@ -50,7 +51,8 @@ export type BotConfig =
   | { type: StrategyType.LimitQuoter; config: LimitQuoterConfig }
   | { type: StrategyType.RealQuoter; config: RealQuoterConfig }
   | { type: StrategyType.TWAP; config: TWAPConfig }
-  | { type: StrategyType.BasicQuoter; config: BasicQuoterConfig };
+  | { type: StrategyType.BasicQuoter; config: BasicQuoterConfig }
+  | { type: StrategyType.TEST; config: RealQuoterConfig };
 
 export interface Bot {
   id: string;

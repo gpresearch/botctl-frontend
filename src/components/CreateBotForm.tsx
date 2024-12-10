@@ -44,6 +44,12 @@ const defaultConfigs = {
     order_refresh_seconds: 5,
     position_limit: 1.0,
   },
+  [StrategyType.TEST]: {
+    ...defaultBaseConfig,
+    quote_interval_ms: 1000,
+    max_position_size: 1.0,
+    volatility_threshold: 0.02,
+  },
 };
 
 export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
