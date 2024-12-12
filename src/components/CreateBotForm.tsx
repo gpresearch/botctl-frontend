@@ -15,7 +15,7 @@ interface CreateBotFormProps {
 }
 
 const defaultBaseConfig = {
-  exchange: ExchangeNames.BINANCE,
+  exchange: ExchangeNames.BINANCEUSDM,
   instrument: { base: '', quote: '' }
 };
 
@@ -25,6 +25,7 @@ const defaultConfigs = {
     ref_price: 0,
     bid_bps_away_from_ref: 0,
     ask_bps_away_from_ref: 0,
+    qty: 0,
   },
   [StrategyType.REAL_QUOTER]: {
     ...defaultBaseConfig,
@@ -63,6 +64,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
         type: strategyType,
         config: config
       };
+      console.log(botConfig);
       await createBot(botConfig);
       onBotCreated();
     } catch (error) {
@@ -101,6 +103,15 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
                 step="any"
                 value={config.ask_bps_away_from_ref}
                 onChange={(e) => setConfig({ ...config, ask_bps_away_from_ref: parseFloat(e.target.value) })}
+              />
+            </div>
+            <div className="form-group">
+              <label>Quantity:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.qty}
+                onChange={(e) => setConfig({ ...config, qty: parseFloat(e.target.value) })}
               />
             </div>
           </>

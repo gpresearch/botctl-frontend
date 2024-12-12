@@ -1,7 +1,5 @@
 export enum ExchangeNames {
-  BINANCE = 'BINANCE',
-  COINBASE = 'COINBASE',
-  // Add other exchanges as needed
+  BINANCEUSDM = 'binanceusdm',  // Add other exchanges as needed
 }
 
 export interface Instrument {
@@ -26,6 +24,7 @@ export interface LimitQuoterConfig extends BaseConfig {
   ref_price: number;
   bid_bps_away_from_ref: number;
   ask_bps_away_from_ref: number;
+  qty: number;
 }
 
 export interface RealQuoterConfig extends BaseConfig {
