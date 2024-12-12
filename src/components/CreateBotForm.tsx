@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import { 
   ExchangeNames, 
   StrategyType,
-  LimitQuoterConfig,
-  RealQuoterConfig,
-  TWAPConfig,
-  BasicQuoterConfig,
   BotConfig
 } from '../types';
 import { createBot } from '../api';
@@ -33,12 +29,6 @@ const defaultConfigs = {
     max_position_size: 1.0,
     volatility_threshold: 0.02,
   },
-//   [StrategyType.TWAP]: {
-//     ...defaultBaseConfig,
-//     target_size: 1.0,
-//     time_window_seconds: 3600,
-//     max_participation_rate: 0.1,
-//   },
   [StrategyType.BASIC_QUOTER]: {
     ...defaultBaseConfig,
     spread_bps: 10,
@@ -144,38 +134,6 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
                 step="any"
                 value={config.volatility_threshold}
                 onChange={(e) => setConfig({ ...config, volatility_threshold: parseFloat(e.target.value) })}
-              />
-            </div>
-          </>
-        );
-
-      case StrategyType.TWAP:
-        return (
-          <>
-            <div className="form-group">
-              <label>Target Size:</label>
-              <input
-                type="number"
-                step="any"
-                value={config.target_size}
-                onChange={(e) => setConfig({ ...config, target_size: parseFloat(e.target.value) })}
-              />
-            </div>
-            <div className="form-group">
-              <label>Time Window (seconds):</label>
-              <input
-                type="number"
-                value={config.time_window_seconds}
-                onChange={(e) => setConfig({ ...config, time_window_seconds: parseInt(e.target.value) })}
-              />
-            </div>
-            <div className="form-group">
-              <label>Max Participation Rate:</label>
-              <input
-                type="number"
-                step="any"
-                value={config.max_participation_rate}
-                onChange={(e) => setConfig({ ...config, max_participation_rate: parseFloat(e.target.value) })}
               />
             </div>
           </>

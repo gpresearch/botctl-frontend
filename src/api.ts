@@ -1,4 +1,4 @@
-import { BotConfig, Bot, Order } from './types';
+import { BotConfig, Bot } from './types';
 
 const API_BASE_URL = 'http://localhost:8000'; // Adjust this to match your backend URL
 

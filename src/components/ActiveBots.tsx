@@ -1,6 +1,6 @@
 // Import required dependencies from React and custom types/API functions
 import React, { useState, useEffect } from 'react';
-import { Bot, StrategyType } from '../types';
+import { Bot } from '../types';
 import { stopBots, getActiveBots, modifyBot } from '../api';
 import './ActiveBots.css';
 
@@ -145,7 +145,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
   const renderConfigFields = (bot: Bot) => {
     const configFields = Object.entries(bot.config.config)
       .filter(([_, value]) => typeof value === 'number')
-      .map(([field, value]) => (
+      .map(([field, _]) => (
         <tr key={field}>
           <td>{field}:</td>
           <td>{renderEditableField(bot, field)}</td>
