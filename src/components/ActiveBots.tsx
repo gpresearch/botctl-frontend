@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bot, StrategyType } from '../types';
 import { stopBots, getActiveBots, modifyBot } from '../api';
+import './ActiveBots.css';
 
 // Define the props interface for the ActiveBots component
 interface ActiveBotsProps {
@@ -171,9 +172,9 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
             Stop Selected Bots
           </button>
         </div>
-        <div className="bot-table">
+        <div className="bots-grid">
           {bots.map(bot => (
-            <div key={bot.id} className="bot-row">
+            <div key={bot.id} className="bot-card">
               <table>
                 <thead>
                   <tr>
