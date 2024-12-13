@@ -1,6 +1,6 @@
 import { BotConfig, Bot } from './types';
 
-const API_BASE_URL = 'http://localhost:8000'; // Adjust this to match your backend URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';; // Adjust this to match your backend URL
 
 export async function createBot(config: BotConfig): Promise<string> {
   const response = await fetch(`${API_BASE_URL}/create`, {
