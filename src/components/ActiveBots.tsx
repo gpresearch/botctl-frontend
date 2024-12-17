@@ -55,7 +55,9 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
 
   const handleStopSelectedBots = async () => {
     try {
-      await stopBots(Array.from(selectedBotIds));
+      const botIdsToStop = Array.from(selectedBotIds);
+      await stopBots(botIdsToStop);
+      setNotification(`Sent Stop Bot Request for ${botIdsToStop.join(', ')}`);
       setSelectedBotIds(new Set());
       onBotsUpdated();
     } catch (error) {
