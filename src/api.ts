@@ -1,4 +1,4 @@
-import { BotConfig, Bot } from './types';
+import { BotConfig, Bot, Order, ExchangeNames } from './types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';; // Adjust this to match your backend URL
 
@@ -63,4 +63,16 @@ export async function modifyBot(botId: string, params: ModifyBotParams): Promise
   if (!response.ok) {
     throw new Error('Failed to modify bot');
   }
+}
+
+export async function getOpenOrders(exchange: ExchangeNames, base: string, counter: string): Promise<Order[]> {
+  const response = await fetch(
+    `${API_BASE_URL}/open_orders?exchange=${exchange}&base=${base}&counter=${counter}`
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to get open orders');
+  }
+
+  return response.json();
 } 

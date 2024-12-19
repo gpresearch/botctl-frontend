@@ -2,6 +2,12 @@ export enum ExchangeNames {
   BINANCEUSDM = 'binanceusdm',  // Add other exchanges as needed
 }
 
+export enum InstrumentPair {
+  BTC_USDT = 'BTC/USDT',
+  ETH_USDT = 'ETH/USDT',
+  SOL_USDT = 'SOL/USDT',
+}
+
 export interface Instrument {
   base: string;
   quote: string;
