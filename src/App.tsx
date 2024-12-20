@@ -1,5 +1,5 @@
 // Import necessary dependencies from React and components
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { CreateBotForm } from './components/CreateBotForm'
 import { ActiveBots } from './components/ActiveBots'
 import { Trade } from './components/Trade'

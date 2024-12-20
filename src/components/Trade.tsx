@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ExchangeNames, InstrumentPair, Order } from '../types';
 import { getOpenOrders } from '../api';
 import './Trade.css';
