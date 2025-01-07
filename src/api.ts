@@ -1,8 +1,8 @@
-import { LimitQuoterConfig, Bot, Order } from './types';
+import { BotConfig, Bot, Order, ExchangeNames } from './types';
 
-const API_BASE_URL = 'http://localhost:8000'; // Adjust this to match your backend URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';; // Adjust this to match your backend URL
 
-export async function createBot(config: LimitQuoterConfig): Promise<string> {
+export async function createBot(config: BotConfig): Promise<string> {
   const response = await fetch(`${API_BASE_URL}/create`, {
     method: 'POST',
     headers: {
@@ -19,24 +19,14 @@ export async function createBot(config: LimitQuoterConfig): Promise<string> {
   return data.bot_id;
 }
 
-export async function getBotStatus(botId: string): Promise<Bot> {
-  const response = await fetch(`${API_BASE_URL}/status/${botId}`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to get bot status');
-  }
-
-  return response.json();
-}
-
-export async function getBotOrders(botId: string): Promise<Order[]> {
-  const response = await fetch(`${API_BASE_URL}/orders/${botId}`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to get bot orders');
-  }
-
-  return response.json();
+export async function getActiveBots(): Promise<Bot[]> {
+    console.log("Getting actie bots");
+    const response = await fetch(`${API_BASE_URL}/active_bots`);
+    
+    if (!response.ok) {
+        throw new Error('Failed to get bot status');
+    }
+    return response.json();
 }
 
 export async function stopBots(botIds: string[]): Promise<void> {
@@ -51,4 +41,38 @@ export async function stopBots(botIds: string[]): Promise<void> {
   if (!response.ok) {
     throw new Error('Failed to stop bots');
   }
+}
+
+export interface ModifyBotParams {
+  field: string;
+  value: number;
+}
+
+export async function modifyBot(botId: string, params: ModifyBotParams): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/modify`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      bot_id: botId,
+      ...params,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to modify bot');
+  }
+}
+
+export async function getOpenOrders(exchange: ExchangeNames, base: string, counter: string): Promise<Order[]> {
+  const response = await fetch(
+    `${API_BASE_URL}/open_orders?exchange=${exchange}&base=${base}&counter=${counter}`
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to get open orders');
+  }
+
+  return response.json();
 } 

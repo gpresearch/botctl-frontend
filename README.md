@@ -1,3 +1,36 @@
+# BotCtl Frontend
+
+## Setup
+
+```
+npm i 
+```
+
+## Usage
+
+```bash
+npm run dev
+```
+
+## Deployment
+
+1. Build the frontend.
+```
+npm run build
+```
+
+2. Copy the build files to the webserver directory.
+```
+sudo cp -r dist/* /var/www/html/
+```
+
+3. Restart the HTTP server on the EC2.
+```
+sudo systemctl restart httpd.service
+```
+- https://docs.fedoraproject.org/en-US/quick-docs/getting-started-with-apache-http-server/
+- https://vanu-verma.medium.com/publish-a-vitejs-react-web-app-to-production-using-ec2-and-apache2-ec86a61c5e17
+- https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Tutorials.WebServerDB.CreateWebServer.html
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
