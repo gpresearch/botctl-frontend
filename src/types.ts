@@ -11,6 +11,7 @@ export enum SupportedSubaccounts {
   binance1 = 'binance1',
   gate1sinclair = 'gate1sinclair',
   bybitengprotoacct = 'bybitengprotoacct',
+  bybit_alex_testnet = 'bybit_alex_testnet',
 }
 /*
 Hardcoded for now with mappings to secrets paths below.
