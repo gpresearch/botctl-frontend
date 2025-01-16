@@ -2,16 +2,17 @@
 // tells the frontend what the available exchanges are.
 export enum SupportedExchangeNames {
   BINANCEUSDM = 'binanceusdm',
-  BYBIT_SPOT = 'bybit_spot',
-  BYBIT_FUTURES = 'bybit_futures',
+  BYBIT = 'bybit',
   METEORA = 'meteora',
 }
 
 export enum SupportedSubaccounts {
   binance1 = 'binance1',
   binance4 = 'binance4',
+  binance_alex_testnet = 'binance_alex_testnet',
   gate1sinclair = 'gate1sinclair',
   bybitengprotoacct = 'bybitengprotoacct',
+  bybit_alex_testnet = 'bybit_alex_testnet'
 }
 /*
 Hardcoded for now with mappings to secrets paths below.
@@ -19,9 +20,8 @@ Hardcoded for now with mappings to secrets paths below.
 See below comment in `BaseConfig` for more details on TODO approach.
 */
 export const EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP = {
-  [SupportedExchangeNames.BINANCEUSDM]: [SupportedSubaccounts.binance1,SupportedSubaccounts.binance4],
-  [SupportedExchangeNames.BYBIT_SPOT]: [SupportedSubaccounts.bybitengprotoacct],
-  [SupportedExchangeNames.BYBIT_FUTURES]: [SupportedSubaccounts.bybitengprotoacct],
+  [SupportedExchangeNames.BINANCEUSDM]: [SupportedSubaccounts.binance1,SupportedSubaccounts.binance4,SupportedSubaccounts.binance_alex_testnet],
+  [SupportedExchangeNames.BYBIT]: [SupportedSubaccounts.bybitengprotoacct,SupportedSubaccounts.bybit_alex_testnet],
   [SupportedExchangeNames.METEORA]: [SupportedSubaccounts.gate1sinclair],
 }
 
@@ -30,6 +30,9 @@ export const SUBACCOUNT_TO_SECRET_PATH_MAP = {
   [SupportedSubaccounts.binance4]: '/proto/BINANCEUSDM_SECRET',
   [SupportedSubaccounts.gate1sinclair]: '/prod-test/basis_bot/GATE1SINCLAIR_SECRET',
   [SupportedSubaccounts.bybitengprotoacct]: '/prod-test/basis_bot/BYBIT_ENGP_SECRET',
+  [SupportedSubaccounts.bybit_alex_testnet]: '/alex/basis_bot/BYBIT_SECRET',
+  [SupportedSubaccounts.binance_alex_testnet]: '/alex/basis_bot/BINANCEUSDM_SECRET',
+
 };
 
 
