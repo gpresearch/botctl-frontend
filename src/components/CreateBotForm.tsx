@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { 
-  ExchangeNames, 
-  StrategyType,
-  BotConfig
+  SupportedExchangeNames, 
+  SupportedStrategyType,
+  BotConfig,
+  InstrumentPair,
+  SupportedSubaccounts,
+  SUBACCOUNT_TO_SECRET_PATH_MAP,
+  EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP
 } from '../types';
 import { createBot } from '../api';
 
@@ -11,41 +15,55 @@ interface CreateBotFormProps {
 }
 
 const defaultBaseConfig = {
-  exchange: ExchangeNames.BINANCEUSDM,
-  instrument: { base: '', quote: '' }
+  exchange: SupportedExchangeNames.BINANCEUSDM,
+  instrument: InstrumentPair.BTC_USDT,
 };
 
 const defaultConfigs = {
-  [StrategyType.LIMIT_QUOTER]: {
+  [SupportedStrategyType.LIMIT_QUOTER]: {
     ...defaultBaseConfig,
     ref_price: 0,
     bid_bps_away_from_ref: 0,
     ask_bps_away_from_ref: 0,
     qty: 0,
   },
-  [StrategyType.REAL_QUOTER]: {
+  [SupportedStrategyType.POOL_QUOTER]: {
     ...defaultBaseConfig,
-    quote_interval_ms: 1000,
-    max_position_size: 1.0,
-    volatility_threshold: 0.02,
-  },
-  [StrategyType.BASIC_QUOTER]: {
-    ...defaultBaseConfig,
-    spread_bps: 10,
-    order_refresh_seconds: 5,
-    position_limit: 1.0,
+    ref_price: 0,
+    bid_bps_away_from_ref: 0,
+    ask_bps_away_from_ref: 0,
+    qty: 0,
   },
 };
 
 export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
-  const [strategyType, setStrategyType] = useState<StrategyType>(StrategyType.LIMIT_QUOTER);
-  const [config, setConfig] = useState<any>(defaultConfigs[StrategyType.LIMIT_QUOTER]);
+  const [strategyType, setStrategyType] = useState<SupportedStrategyType>(SupportedStrategyType.LIMIT_QUOTER);
+  const [config, setConfig] = useState<any>(defaultConfigs[SupportedStrategyType.LIMIT_QUOTER]);
+  const [selectedSubaccount, setSelectedSubaccount] = useState<SupportedSubaccounts>(SupportedSubaccounts.binance1);
+
 
   const handleStrategyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newType = e.target.value as StrategyType;
+    const newType = e.target.value as SupportedStrategyType;
     setStrategyType(newType);
     setConfig(defaultConfigs[newType]);
   };
+
+  const handleInstrumentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const [base, quote] = (e.target.value as InstrumentPair).split('/');
+    setConfig({
+      ...config,
+      instrument: { base, quote }
+    });
+  };
+
+  const handleSubaccountChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const subaccount = (e.target.value as SupportedSubaccounts);
+    setSelectedSubaccount(subaccount);
+    setConfig({
+      ...config,
+      subaccount_secret_path: SUBACCOUNT_TO_SECRET_PATH_MAP[subaccount]
+    });
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,18 +72,17 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
         type: strategyType,
         config: config
       };
-      console.log(botConfig);
+      console.log("Submitting bot config to backend:", botConfig);
       await createBot(botConfig);
       onBotCreated();
     } catch (error) {
-      console.error('Failed to create bot:', error);
       alert('Failed to create bot');
     }
   };
 
   const renderStrategySpecificFields = () => {
     switch (strategyType) {
-      case StrategyType.LIMIT_QUOTER:
+      case SupportedStrategyType.LIMIT_QUOTER:
         return (
           <>
             <div className="form-group">
@@ -106,66 +123,43 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
             </div>
           </>
         );
-
-      case StrategyType.REAL_QUOTER:
+      case SupportedStrategyType.POOL_QUOTER:
         return (
           <>
             <div className="form-group">
-              <label>Quote Interval (ms):</label>
-              <input
-                type="number"
-                value={config.quote_interval_ms}
-                onChange={(e) => setConfig({ ...config, quote_interval_ms: parseInt(e.target.value) })}
-              />
-            </div>
-            <div className="form-group">
-              <label>Max Position Size:</label>
+              <label>Reference Price:</label>
               <input
                 type="number"
                 step="any"
-                value={config.max_position_size}
-                onChange={(e) => setConfig({ ...config, max_position_size: parseFloat(e.target.value) })}
+                value={config.ref_price}
+                onChange={(e) => setConfig({ ...config, ref_price: parseFloat(e.target.value) })}
               />
             </div>
             <div className="form-group">
-              <label>Volatility Threshold:</label>
+              <label>Bid BPS Away:</label>
               <input
                 type="number"
                 step="any"
-                value={config.volatility_threshold}
-                onChange={(e) => setConfig({ ...config, volatility_threshold: parseFloat(e.target.value) })}
+                value={config.bid_bps_away_from_ref}
+                onChange={(e) => setConfig({ ...config, bid_bps_away_from_ref: parseFloat(e.target.value) })}
               />
             </div>
-          </>
-        );
-
-      case StrategyType.BASIC_QUOTER:
-        return (
-          <>
             <div className="form-group">
-              <label>Spread BPS:</label>
+              <label>Ask BPS Away:</label>
               <input
                 type="number"
                 step="any"
-                value={config.spread_bps}
-                onChange={(e) => setConfig({ ...config, spread_bps: parseFloat(e.target.value) })}
+                value={config.ask_bps_away_from_ref}
+                onChange={(e) => setConfig({ ...config, ask_bps_away_from_ref: parseFloat(e.target.value) })}
               />
             </div>
             <div className="form-group">
-              <label>Order Refresh (seconds):</label>
-              <input
-                type="number"
-                value={config.order_refresh_seconds}
-                onChange={(e) => setConfig({ ...config, order_refresh_seconds: parseInt(e.target.value) })}
-              />
-            </div>
-            <div className="form-group">
-              <label>Position Limit:</label>
+              <label>Quantity:</label>
               <input
                 type="number"
                 step="any"
-                value={config.position_limit}
-                onChange={(e) => setConfig({ ...config, position_limit: parseFloat(e.target.value) })}
+                value={config.qty}
+                onChange={(e) => setConfig({ ...config, qty: parseFloat(e.target.value) })}
               />
             </div>
           </>
@@ -183,7 +177,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
           value={strategyType}
           onChange={handleStrategyChange}
         >
-          {Object.values(StrategyType).map((type) => (
+          {Object.values(SupportedStrategyType).map((type) => (
             <option key={type} value={type}>{type}</option>
           ))}
         </select>
@@ -195,36 +189,33 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
           value={config.exchange}
           onChange={(e) => setConfig({ ...config, exchange: e.target.value })}
         >
-          {Object.values(ExchangeNames).map((exchange) => (
+          {Object.values(SupportedExchangeNames).map((exchange) => (
             <option key={exchange} value={exchange}>{exchange}</option>
           ))}
         </select>
       </div>
 
       <div className="form-group">
-        <label>Base Currency:</label>
-        <input
-          type="text"
-          value={config.instrument.base}
-          onChange={(e) => setConfig({
-            ...config,
-            instrument: { ...config.instrument, base: e.target.value.toUpperCase() }
-          })}
-          placeholder="BTC"
-        />
+        <label>Instrument:</label>
+        <select
+          value={`${config.instrument.base}/${config.instrument.quote}`}
+          onChange={handleInstrumentChange}
+        >
+          {Object.values(InstrumentPair).map((instrument) => (
+            <option key={instrument} value={instrument}>{instrument}</option>
+          ))}
+        </select>
       </div>
-
       <div className="form-group">
-        <label>Quote Currency:</label>
-        <input
-          type="text"
-          value={config.instrument.quote}
-          onChange={(e) => setConfig({
-            ...config,
-            instrument: { ...config.instrument, quote: e.target.value.toUpperCase() }
-          })}
-          placeholder="USDT"
-        />
+        <label>Subaccount:</label>
+        <select
+          value={selectedSubaccount}
+          onChange={handleSubaccountChange}
+        >
+          {EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP[config.exchange as SupportedExchangeNames].map((subaccount: SupportedSubaccounts) => (
+            <option key={subaccount} value={subaccount}>{subaccount}</option>
+          ))}
+        </select>
       </div>
 
       {renderStrategySpecificFields()}
