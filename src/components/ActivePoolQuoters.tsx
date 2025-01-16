@@ -107,7 +107,7 @@ export function ActivePoolQuoters({ onBotsUpdated }: ActivePoolQuotersProps) {
                 <table className="config-table">
                   <tbody>
                     {Object.entries(bot.config.config)
-                      .filter(([key, value]) => typeof value === 'number')
+                      .filter(([_, value]) => typeof value === 'number')
                       .map(([field, value]) => (
                         <tr key={field}>
                           <td>{field}:</td>
