@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { CreateBotForm } from './components/CreateBotForm'
 import { ActiveBots } from './components/ActiveBots'
 import { Trade } from './components/Trade'
+import { ActivePoolQuoters } from './components/ActivePoolQuoters'
 import './App.css'
 
 // Main App component that handles the trading bot UI
@@ -11,7 +12,7 @@ function App() {
   const [botIds, setBotIds] = useState<string[]>([])
   
   // State to control which tab is currently visible (create new bot or view active bots)
-  const [activeTab, setActiveTab] = useState<'create' | 'active' | 'trade'>('create')
+  const [activeTab, setActiveTab] = useState<'create' | 'active' | 'trade' | 'pool-quoters'>('create')
 
   // Handler called when a new bot is created - switches view to active bots tab
   const handleBotCreated = () => {
@@ -47,6 +48,12 @@ function App() {
           >
             Trade
           </button>
+          <button
+            className={activeTab === 'pool-quoters' ? 'active' : 'active'}
+            onClick={() => setActiveTab('pool-quoters')}
+          >
+            Pool Quoters
+          </button>
         </nav>
       </header>
 
@@ -62,6 +69,9 @@ function App() {
         )}
         {activeTab === 'trade' && (
           <Trade />
+        )}
+        {activeTab === 'pool-quoters' && (
+          <ActivePoolQuoters onBotsUpdated={handleBotsUpdated} />
         )}
       </main>
     </div>

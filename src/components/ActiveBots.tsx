@@ -1,6 +1,6 @@
 // Import required dependencies from React and custom types/API functions
 import React, { useState, useEffect } from 'react';
-import { BotInfo } from '../types';
+import { BotResp } from '../types';
 import { stopBots, getActiveBots, modifyBot } from '../api';
 import './ActiveBots.css';
 
@@ -17,7 +17,7 @@ interface EditableField {
 }
 
 export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
-  const [bots, setBots] = useState<BotInfo[]>([]);
+  const [bots, setBots] = useState<BotResp[]>([]);
   const [selectedBotIds, setSelectedBotIds] = useState<Set<string>>(new Set());
   const [editingField, setEditingField] = useState<EditableField | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
@@ -111,7 +111,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
     }
   };
 
-  const renderEditableField = (bot: BotInfo, field: string) => {
+  const renderEditableField = (bot: BotResp, field: string) => {
     const isEditing = editingField?.id === bot.id && editingField?.field === field;
     const value = bot.config.config[field as keyof typeof bot.config.config];
 
@@ -144,7 +144,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
     );
   };
 
-  const renderConfigFields = (bot: BotInfo) => {
+  const renderConfigFields = (bot: BotResp) => {
     const configFields = Object.entries(bot.config.config)
       .filter(([_, value]) => typeof value === 'number')
       .map(([field, _]) => (

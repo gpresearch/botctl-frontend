@@ -1,4 +1,4 @@
-import { BotConfig, BotInfo, FrontendOrder, SupportedExchangeNames } from './types';
+import { BotConfig, BotResp, FrontendOrder, SupportedExchangeNames, PoolQuoterResp } from './types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';; // Adjust this to match your backend URL
 
@@ -19,7 +19,7 @@ export async function createBot(config: BotConfig): Promise<string> {
   return data.bot_id;
 }
 
-export async function getActiveBots(): Promise<BotInfo[]> {
+export async function getActiveBots(): Promise<BotResp[]> {
     console.log("Getting active bots at", API_BASE_URL);
     const response = await fetch(`${API_BASE_URL}/active_bots`);
     
@@ -74,5 +74,15 @@ export async function getOpenOrders(exchange: SupportedExchangeNames, base: stri
     throw new Error('Failed to get open orders');
   }
 
+  return response.json();
+}
+
+export async function getActivePoolQuoters(): Promise<PoolQuoterResp[]> {
+  console.log("Getting active pool quoters at", API_BASE_URL);
+  const response = await fetch(`${API_BASE_URL}/active_pool_quoters`);
+  
+  if (!response.ok) {
+    throw new Error('Failed to get pool quoter status');
+  }
   return response.json();
 } 

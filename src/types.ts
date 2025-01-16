@@ -113,9 +113,6 @@ export interface BasicQuoterConfig extends BaseConfig {
 
 export type BotConfig = 
   | { type: SupportedStrategyType.LIMIT_QUOTER; config: LimitQuoterConfig }
-  | { type: SupportedStrategyType.REAL_QUOTER; config: RealQuoterConfig }
-  | { type: SupportedStrategyType.TWAP; config: TWAPConfig }
-  | { type: SupportedStrategyType.BASIC_QUOTER; config: BasicQuoterConfig }
   | { type: SupportedStrategyType.POOL_QUOTER; config: PoolQuoterConfig }
 
 
@@ -124,12 +121,17 @@ export type BotConfig =
 Bot Response Type used to populate frontend view.
 
 */
-
-export interface BotInfo {
+export interface BotResp {
   id: string;
   config: BotConfig;
   status: 'ACTIVE' | 'STOPPED';
   orders: FrontendOrder[];
+}
+
+export interface PoolQuoterResp {
+  id: string;
+  config: BotConfig;
+  status: 'ACTIVE' | 'STOPPED';
 }
 
 // An order type for display in the frontend.
