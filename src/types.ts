@@ -41,6 +41,11 @@ export enum InstrumentPair {
   SOL_USDT = 'SOL/USDT',
 }
 
+export function getInstrumentFromEnum(instrument: InstrumentPair): Instrument {
+  const [base, quote] = instrument.split('/');
+  return { base: base, quote: quote };
+}
+
 export interface Instrument {
   base: string;
   quote: string;

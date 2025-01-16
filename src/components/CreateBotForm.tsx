@@ -6,7 +6,8 @@ import {
   InstrumentPair,
   SupportedSubaccounts,
   SUBACCOUNT_TO_SECRET_PATH_MAP,
-  EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP
+  EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP,
+  getInstrumentFromEnum
 } from '../types';
 import { createBot } from '../api';
 
@@ -16,7 +17,8 @@ interface CreateBotFormProps {
 
 const defaultBaseConfig = {
   exchange: SupportedExchangeNames.BINANCEUSDM,
-  instrument: InstrumentPair.BTC_USDT,
+  instrument: getInstrumentFromEnum(InstrumentPair.BTC_USDT),
+  subaccount_secret_path : SUBACCOUNT_TO_SECRET_PATH_MAP[SupportedSubaccounts.binance1]
 };
 
 const defaultConfigs = {
@@ -49,10 +51,10 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
   };
 
   const handleInstrumentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const [base, quote] = (e.target.value as InstrumentPair).split('/');
+    const ins = e.target.value as InstrumentPair;
     setConfig({
       ...config,
-      instrument: { base, quote }
+      instrument: getInstrumentFromEnum(ins)
     });
   };
 
