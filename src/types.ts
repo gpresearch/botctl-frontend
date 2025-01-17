@@ -58,6 +58,7 @@ export interface Instrument {
 export enum SupportedStrategyType {
   LIMIT_QUOTER = 'limit_quoter',
   POOL_QUOTER = 'pool_quoter',
+  TWAP = 'twap'
 }
 
 
@@ -80,15 +81,23 @@ interface BaseConfig {
 
 export const CONFIG_MAP = {
   [SupportedStrategyType.LIMIT_QUOTER]: {} as LimitQuoterConfig,
-  [SupportedStrategyType.POOL_QUOTER]: {} as BaseConfig, // Using BaseConfig as fallback since no specific config defined
+  [SupportedStrategyType.POOL_QUOTER]: {} as PoolQuoterConfig,
+  [SupportedStrategyType.TWAP]: {} as TWAPConfigReq,
 };
 
-export interface TWAPConfig extends BaseConfig {
-  ref_price: number;
-  bid_bps_away_from_ref: number;
-  ask_bps_away_from_ref: number;
-  qty: number;
+export interface TWAPConfigReq extends BaseConfig {
+  target_position: number;
+  twap_interval: string;
+  twap_qty: number;
+  width_bps: number;
+  order_size_usd: number;
+  order_jitter_usd: number;
+  price_tol_bps: number;
+  allow_cross: boolean;
+  time_between_orders: string;
+  min_resting_time: string;
 }
+
 export interface PoolQuoterConfig extends BaseConfig {
   ref_price: number;
   bid_bps_away_from_ref: number;
@@ -124,6 +133,7 @@ export interface BasicQuoterConfig extends BaseConfig {
 export type BotConfig = 
   | { type: SupportedStrategyType.LIMIT_QUOTER; config: LimitQuoterConfig }
   | { type: SupportedStrategyType.POOL_QUOTER; config: PoolQuoterConfig }
+  | { type: SupportedStrategyType.TWAP; config: TWAPConfigReq }
 
 
 /*

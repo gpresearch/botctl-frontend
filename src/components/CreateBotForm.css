@@ -1,0 +1,29 @@
+.current-position {
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.current-position label {
+  margin: 0;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.position-value {
+  font-family: monospace;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.position-value.highlight {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+/* Existing form styles if any */ 
