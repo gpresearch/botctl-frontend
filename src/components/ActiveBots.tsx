@@ -95,10 +95,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
         }));
 
         // Send update to backend
-        await modifyBot(editingField.id, {
-          field: editingField.field,
-          value: editingField.value
-        });
+        await modifyBot(editingField.id, bot.config);
         
         setNotification('Updated value sent to bot');
         setEditingField(null);
@@ -185,6 +182,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
                     <th>Strategy</th>
                     <th>Exchange</th>
                     <th>Instrument</th>
+                    <th>Type</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -199,7 +197,8 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
                     <td>{bot.id}</td>
                     <td>{bot.config.type}</td>
                     <td>{bot.config.config.exchange}</td>
-                    <td>{`${bot.config.config.instrument.base}/${bot.config.config.instrument.quote}`}</td>
+                    <td>{`${bot.config.config.exchange_instrument.base}/${bot.config.config.exchange_instrument.counter}`}</td>
+                    <td>{bot.config.config.exchange_instrument.type}</td>
                   </tr>
                 </tbody>
               </table>
@@ -222,7 +221,6 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
                       <th>Price</th>
                       <th>Size</th>
                       <th>Status</th>
-                      <th>Time</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -232,7 +230,6 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
                         <td>{order.price}</td>
                         <td>{order.size}</td>
                         <td>{order.status}</td>
-                        <td>{new Date(order.timestamp).toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>

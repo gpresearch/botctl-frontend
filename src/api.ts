@@ -1,8 +1,8 @@
-import { BotConfig, BotResp, FrontendOrder, SupportedExchangeNames, PoolQuoterResp, SupportedSubaccounts } from './types';
+import { BotConfigReq, BotResp, FrontendOrder, SupportedExchangeNames, PoolQuoterResp, SupportedSubaccounts } from './types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';; // Adjust this to match your backend URL
 
-export async function createBot(config: BotConfig): Promise<string> {
+export async function createBot(config: BotConfigReq): Promise<string> {
   const response = await fetch(`${API_BASE_URL}/create`, {
     method: 'POST',
     headers: {
@@ -48,7 +48,7 @@ export interface ModifyBotParams {
   value: number;
 }
 
-export async function modifyBot(botId: string, params: ModifyBotParams): Promise<void> {
+export async function modifyBot(botId: string, config: BotConfigReq): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/modify`, {
     method: 'POST',
     headers: {
@@ -56,7 +56,7 @@ export async function modifyBot(botId: string, params: ModifyBotParams): Promise
     },
     body: JSON.stringify({
       bot_id: botId,
-      ...params,
+      config: config,
     }),
   });
 

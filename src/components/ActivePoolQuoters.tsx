@@ -97,7 +97,7 @@ export function ActivePoolQuoters({ onBotsUpdated }: ActivePoolQuotersProps) {
                     <td>{bot.id}</td>
                     <td>{bot.config.type}</td>
                     <td>{bot.config.config.exchange}</td>
-                    <td>{`${bot.config.config.instrument.base}/${bot.config.config.instrument.quote}`}</td>
+                    <td>{`${bot.config.config.exchange_instrument.base}/${bot.config.config.exchange_instrument.counter}`}</td>
                   </tr>
                 </tbody>
               </table>

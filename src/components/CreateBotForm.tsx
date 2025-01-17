@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { 
   SupportedExchangeNames, 
   SupportedStrategyType,
-  BotConfig,
+  BotConfigReq,
   InstrumentPair,
   SupportedSubaccounts,
   SUBACCOUNT_TO_SECRET_PATH_MAP,
   EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP,
-  getInstrumentFromEnum
+  getInstrumentFromEnum,
+  InstrumentType
 } from '../types';
 import { createBot, getPosition } from '../api';
 import './CreateBotForm.css';
@@ -18,8 +19,13 @@ interface CreateBotFormProps {
 
 const defaultBaseConfig = {
   exchange: SupportedExchangeNames.BINANCEUSDM,
-  instrument: getInstrumentFromEnum(InstrumentPair.BTC_USDT),
-  subaccount_secret_path : SUBACCOUNT_TO_SECRET_PATH_MAP[SupportedSubaccounts.binance1]
+  exchange_instrument: {
+    base: 'BTC',
+    counter: 'USDT',
+    exchange: SupportedExchangeNames.BINANCEUSDM,
+    type: InstrumentType.PERP
+  },
+  subaccount_secret_path: SUBACCOUNT_TO_SECRET_PATH_MAP[SupportedSubaccounts.binance1]
 };
 
 const defaultConfigs = {
@@ -29,6 +35,7 @@ const defaultConfigs = {
     bid_bps_away_from_ref: 0,
     ask_bps_away_from_ref: 0,
     qty: 0,
+    max_position_usd: 0,
   },
   [SupportedStrategyType.POOL_QUOTER]: {
     ...defaultBaseConfig,
@@ -56,6 +63,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
   const [strategyType, setStrategyType] = useState<SupportedStrategyType>(SupportedStrategyType.LIMIT_QUOTER);
   const [config, setConfig] = useState<any>(defaultConfigs[SupportedStrategyType.LIMIT_QUOTER]);
   const [selectedSubaccount, setSelectedSubaccount] = useState<SupportedSubaccounts>(SupportedSubaccounts.binance1);
+  const [instrumentType, setInstrumentType] = useState<InstrumentType>(InstrumentType.PERP);
   const [currentPosition, setCurrentPosition] = useState<number | null>(null);
   const [isLoadingPosition, setIsLoadingPosition] = useState(false);
 
@@ -74,7 +82,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
         const response = await getPosition({
           exchange: config.exchange,
           subaccount: selectedSubaccount,
-          instrument: config.instrument
+          instrument: config.exchange_instrument
         });
         if (isMounted) {
           setCurrentPosition(response.position);
@@ -98,7 +106,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
       isMounted = false;
       clearInterval(interval);
     };
-  }, [strategyType, config.exchange, selectedSubaccount, config.instrument]);
+  }, [strategyType, config.exchange, selectedSubaccount, config.exchange_instrument]);
 
   const handleStrategyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = e.target.value as SupportedStrategyType;
@@ -108,9 +116,27 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
 
   const handleInstrumentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const ins = e.target.value as InstrumentPair;
+    const [base, counter] = ins.split('/');
     setConfig({
       ...config,
-      instrument: getInstrumentFromEnum(ins)
+      exchange_instrument: { 
+        base,
+        counter,
+        exchange: config.exchange,
+        type: instrumentType
+      }
+    });
+  };
+
+  const handleInstrumentTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newType = e.target.value as InstrumentType;
+    setInstrumentType(newType);
+    setConfig({
+      ...config,
+      exchange_instrument: {
+        ...config.exchange_instrument,
+        type: newType
+      }
     });
   };
 
@@ -126,7 +152,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const botConfig: BotConfig = {
+      const botConfig: BotConfigReq = {
         type: strategyType,
         config: config
       };
@@ -177,6 +203,15 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
                 step="any"
                 value={config.qty}
                 onChange={(e) => setConfig({ ...config, qty: parseFloat(e.target.value) })}
+              />
+            </div>
+            <div className="form-group">
+              <label>Max Position USD:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.max_position_usd}
+                onChange={(e) => setConfig({ ...config, max_position_usd: parseFloat(e.target.value) })}
               />
             </div>
           </>
@@ -342,7 +377,14 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
         <label>Exchange:</label>
         <select
           value={config.exchange}
-          onChange={(e) => setConfig({ ...config, exchange: e.target.value })}
+          onChange={(e) => setConfig({
+            ...config,
+            exchange: e.target.value,
+            exchange_instrument: {
+              ...config.exchange_instrument,
+              exchange: e.target.value
+            }
+          })}
         >
           {Object.values(SupportedExchangeNames).map((exchange) => (
             <option key={exchange} value={exchange}>{exchange}</option>
@@ -351,9 +393,21 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
       </div>
 
       <div className="form-group">
+        <label>Instrument Type:</label>
+        <select
+          value={instrumentType}
+          onChange={handleInstrumentTypeChange}
+        >
+          {Object.values(InstrumentType).map((type) => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="form-group">
         <label>Instrument:</label>
         <select
-          value={`${config.instrument.base}/${config.instrument.quote}`}
+          value={`${config.exchange_instrument.base}/${config.exchange_instrument.counter}`}
           onChange={handleInstrumentChange}
         >
           {Object.values(InstrumentPair).map((instrument) => (
@@ -361,6 +415,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
           ))}
         </select>
       </div>
+
       <div className="form-group">
         <label>Subaccount:</label>
         <select

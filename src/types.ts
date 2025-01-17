@@ -44,15 +44,28 @@ export enum InstrumentPair {
   SOL_USDT = 'SOL/USDT',
 }
 
+export enum InstrumentType {
+  SPOT = 'spot',
+  PERP = 'perp',
+}
+
 export function getInstrumentFromEnum(instrument: InstrumentPair): Instrument {
   const [base, quote] = instrument.split('/');
-  return { base: base, quote: quote };
+  return { base: base, counter: quote };
 }
 
 export interface Instrument {
   base: string;
-  quote: string;
+  counter: string;
 }
+
+export interface ExchangeInstrument {
+  base: string;
+  counter: string;
+  exchange: string;
+  type: InstrumentType;
+}
+
 // TODO[alex]: Populate this from an api response that
 // tells the frontend what the available strategies are.
 export enum SupportedStrategyType {
@@ -71,13 +84,17 @@ Define Configs for Strategies launchable through BotCTL.
 // Base config interface that all strategies share
 interface BaseConfig {
   exchange: SupportedExchangeNames;
-  instrument: Instrument;
+  exchange_instrument: ExchangeInstrument;
   // TODO[alex]: Eventually we should make this a subaccount name.
   // that is brought in from a DB and mapped to a secret path so the user
   // can select a supported subaccount and not misconfigure the secret path.
   // this could be accomplished with a subaccount table in PSQL.
   subaccount_secret_path: string;
 }
+
+
+
+
 
 export const CONFIG_MAP = {
   [SupportedStrategyType.LIMIT_QUOTER]: {} as LimitQuoterConfig,
@@ -110,6 +127,7 @@ export interface LimitQuoterConfig extends BaseConfig {
   bid_bps_away_from_ref: number;
   ask_bps_away_from_ref: number;
   qty: number;
+  max_position_usd: number;
 }
 
 export interface RealQuoterConfig extends BaseConfig {
@@ -130,7 +148,7 @@ export interface BasicQuoterConfig extends BaseConfig {
   position_limit: number;
 }
 
-export type BotConfig = 
+export type BotConfigReq = 
   | { type: SupportedStrategyType.LIMIT_QUOTER; config: LimitQuoterConfig }
   | { type: SupportedStrategyType.POOL_QUOTER; config: PoolQuoterConfig }
   | { type: SupportedStrategyType.TWAP; config: TWAPConfigReq }
@@ -143,14 +161,14 @@ Bot Response Type used to populate frontend view.
 */
 export interface BotResp {
   id: string;
-  config: BotConfig;
+  config: BotConfigReq;
   status: 'ACTIVE' | 'STOPPED';
   orders: FrontendOrder[];
 }
 
 export interface PoolQuoterResp {
   id: string;
-  config: BotConfig;
+  config: BotConfigReq;
   status: 'ACTIVE' | 'STOPPED';
 }
 
