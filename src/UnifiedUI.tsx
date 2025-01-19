@@ -20,7 +20,7 @@ const UnifiedUI = () => {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center", // Centers horizontally
-                    height: "100vh", // Full viewport height to center vertically
+                    minHeight: "100vh", // Full viewport height to center vertically
                     width: "100vw", // Full viewport height to center vertically
                     textAlign: "center", // Optional: Center text inside containers
                     backgroundColor: "#0b0f19",

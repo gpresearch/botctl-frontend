@@ -220,3 +220,8 @@ th {
 header {
   margin-bottom: 0px;
 }
+
+body {
+  font-family: "Manrope", serif;
+  font-optical-sizing: auto;
+}

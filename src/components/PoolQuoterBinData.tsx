@@ -80,7 +80,7 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
             border: '1px solid #282940',
             borderRadius: '1rem',
             padding: '12px',
-            background: '#18192c'
+            background: "#141626"
         }}>
             <Grid container spacing={1} sx={{flexGrow: 1}}>
                 <Grid size={12}>

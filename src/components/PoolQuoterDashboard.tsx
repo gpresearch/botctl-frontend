@@ -3,6 +3,9 @@ import PoolQuoterBinData from "./PoolQuoterBinData.tsx";
 import Grid from '@mui/material/Grid2';
 import LhavaButton from "./LhavaButton.tsx";
 import {useState} from "react";
+import PoolQuoterCreateAgent from "./PoolQuoterCreateAgent.tsx";
+import PoolQuoterRunningAgents from "./PoolQuoterRunningAgents.tsx";
+import PoolQuoterLogViewer from "./PoolQuoterLogViewer.tsx";
 
 
 const PoolQuoterDashboard = () => {
@@ -23,17 +26,14 @@ const PoolQuoterDashboard = () => {
                         <PoolQuoterBinData tokenPair={tokenPair} />
                     </Grid>
                     <Grid size={6}>
-                        <PoolQuoterBinData tokenPair={tokenPair} />
+                        <PoolQuoterRunningAgents />
                     </Grid>
-                    <Grid size={6}>
-                        <PoolQuoterBinData tokenPair={tokenPair} />
-                    </Grid>
-                    <Grid size={6}>
-                        <PoolQuoterBinData tokenPair={tokenPair} />
+                    <Grid size={12}>
+                        <PoolQuoterLogViewer tokenPair={"TNSR_USDC"} />
                     </Grid>
                 </Grid>;
-            case "create_pool":
-                return <div>create pool</div>;
+            case "create_agent":
+                return <PoolQuoterCreateAgent/>;
             case "tnsr/usdc":
                 return <PoolQuoterBinData tokenPair={tokenPair} />
             default:
@@ -45,26 +45,26 @@ const PoolQuoterDashboard = () => {
         <Container>
             <Grid container spacing={0}>
                 <Grid size={12} sx={{ flexGrow: 1, textAlign: "left", color: 'white' }}>
-                    <h2>Pool Quoter</h2>
+                    <h2 style={{fontFamily: 'Manrope'}}>Pool Quoter (MVP)</h2>
                 </Grid>
             </Grid>
             <Grid container spacing={2}>
                 <Grid size={2} sx={{ flexGrow: 1, color: 'white', textAlign: 'center' }}>
                     <Grid container spacing={2}>
                         <Container>
-                            <div style={{textAlign: "center", fontSize: 11, fontWeight: 'bold'}}>
-                                Actions
+                            <div style={{textAlign: "center", fontSize: 12, textDecoration: 'underline', fontWeight: 'bold'}}>
+                                Views
                             </div>
                         </Container>
                         <Container sx={{ borderRadius: '10px'}}>
-                            <LhavaButton onClick={() => handlePageChange("all_pools")}>View All Pools</LhavaButton>
+                            <LhavaButton onClick={() => handlePageChange("all_pools")}>Dasbhoard</LhavaButton>
                         </Container>
                         <Container sx={{ borderRadius: '10px' }}>
-                            <LhavaButton  onClick={() => handlePageChange("create_pool")}>Create Pool</LhavaButton>
+                            <LhavaButton  onClick={() => handlePageChange("create_agent")}>Create Agent</LhavaButton>
                         </Container>
                         <Container>
-                            <div style={{textAlign: "center", fontSize: 11, fontWeight: 'bold'}}>
-                                Pools
+                            <div style={{textAlign: "center", fontSize: 12, textDecoration: 'underline', fontWeight: 'bold'}}>
+                                Agents
                             </div>
                         </Container>
                         <Container sx={{ borderRadius: '10px' }}>

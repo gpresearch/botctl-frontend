@@ -1,5 +1,7 @@
 import PoolQuoterDashboard from "./PoolQuoterDashboard.tsx";
 import UnifiedUIPoolQuoter from "./UnifiedUIPoolQuoter.tsx";
+import UnifiedUILogin from "./UnifiedUILogin.tsx";
+import UnifiedUISettings from "./UnifiedUISettings.tsx";
 
 interface UnifiedUIDashboardProps {
     currentPage: string;
@@ -7,15 +9,16 @@ interface UnifiedUIDashboardProps {
 
 const UnifiedUIDashboard = ({currentPage}: UnifiedUIDashboardProps) => {
     const renderPage = () => {
+        console.log(currentPage)
         switch (currentPage) {
             case "PoolQuoter":
                 return <PoolQuoterDashboard/>;
-            case "AllPools":
+            case "Agents":
                 return <UnifiedUIPoolQuoter/>;
-            case "settings":
-                return <div>Settings Page</div>;
+            case "Settings":
+                return <UnifiedUISettings/>;
             default:
-                return <div>Welcome to the Home Page</div>;
+                return <UnifiedUILogin/>;
         }
     };
 

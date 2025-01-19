@@ -4,13 +4,13 @@ import Toolbar from '@mui/material/Toolbar';
 import {styled} from "@mui/material";
 import Button, {ButtonProps} from "@mui/material/Button";
 
-const pages = ['PoolQuoter', 'AllPools'];
+const pages = ['PoolQuoter'];
 
 const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
     color: theme.palette.getContrastText('#000124'),
     backgroundColor: '#21252e',
     borderRadius: '18px',
-    padding: '6px 10px',
+    padding: '6px 24px',
     fontWeight: '800',
     cursor: 'pointer',
     boxShadow: '0 0 7px rgba(0, 0, 0, 0.0)',
