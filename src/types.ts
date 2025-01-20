@@ -42,6 +42,7 @@ export enum InstrumentPair {
   BTC_USDT = 'BTC/USDT',
   ETH_USDT = 'ETH/USDT',
   SOL_USDT = 'SOL/USDT',
+  XRP_USDT = 'XRP/USDT',
 }
 
 export enum InstrumentType {
@@ -111,7 +112,8 @@ export interface TWAPConfigReq extends BaseConfig {
   order_jitter_usd: number;
   price_tol_bps: number;
   allow_cross: boolean;
-  time_between_orders: string;
+  min_cross_bps : number;
+  max_cross_bps : number;
   min_resting_time: string;
 }
 

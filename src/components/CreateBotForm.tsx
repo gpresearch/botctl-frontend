@@ -7,7 +7,6 @@ import {
   SupportedSubaccounts,
   SUBACCOUNT_TO_SECRET_PATH_MAP,
   EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP,
-  getInstrumentFromEnum,
   InstrumentType
 } from '../types';
 import { createBot, getPosition } from '../api';
@@ -54,6 +53,8 @@ const defaultConfigs = {
     order_jitter_usd: 8.0,
     price_tol_bps: 1.0,
     allow_cross: false,
+    min_cross_bps: 0.0,
+    max_cross_bps: 0.0,
     time_between_orders: "1s",
     min_resting_time: "5s"
   },
@@ -337,11 +338,21 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
               />
             </div>
             <div className="form-group">
-              <label>Time Between Orders:</label>
+              <label>Min Cross BPS:</label>
               <input
-                type="text"
-                value={config.time_between_orders}
-                onChange={(e) => setConfig({ ...config, time_between_orders: e.target.value })}
+                type="number"
+                step="any"
+                value={config.min_cross_bps}
+                onChange={(e) => setConfig({ ...config, min_cross_bps: parseFloat(e.target.value) })}
+              />
+            </div>
+            <div className="form-group">
+              <label>Max Cross BPS:</label>
+              <input
+                type="number"
+                step="any"
+                value={config.max_cross_bps}
+                onChange={(e) => setConfig({ ...config, max_cross_bps: parseFloat(e.target.value) })}
               />
             </div>
             <div className="form-group">
