@@ -29,7 +29,7 @@ export const SUBACCOUNT_TO_SECRET_PATH_MAP = {
   [SupportedSubaccounts.binance1]: '/prod-test/basis_bot/BINANCEUSDM_SECRET',
   [SupportedSubaccounts.binance4]: '/proto/BINANCEUSDM_SECRET',
   [SupportedSubaccounts.gate1sinclair]: '/prod-test/basis_bot/GATE1SINCLAIR_SECRET',
-  [SupportedSubaccounts.bybitengprotoacct]: '/prod-test/basis_bot/BYBIT_ENGP_SECRET',
+  [SupportedSubaccounts.bybitengprotoacct]: '/proto/BYBIT_ENGP_SECRET',
   [SupportedSubaccounts.bybit_alex_testnet]: '/alex/basis_bot/BYBIT_SECRET',
   [SupportedSubaccounts.binance_alex_testnet]: '/alex/basis_bot/BINANCEUSDM_SECRET',
 

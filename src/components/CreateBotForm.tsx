@@ -9,7 +9,7 @@ import {
   EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP,
   InstrumentType
 } from '../types';
-import { createBot, getPosition } from '../api';
+import { createBot, getPosition, API_BASE_URL } from '../api';
 import './CreateBotForm.css';
 
 interface CreateBotFormProps {
@@ -157,7 +157,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
         type: strategyType,
         config: config
       };
-      console.log("Submitting bot config to backend:", botConfig);
+      console.log(`Submitting bot config to backend at ${API_BASE_URL}:`, botConfig);
       await createBot(botConfig);
       onBotCreated();
     } catch (error) {

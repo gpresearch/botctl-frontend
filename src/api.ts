@@ -1,6 +1,6 @@
 import { BotConfigReq, BotResp, FrontendOrder, SupportedExchangeNames, PoolQuoterResp, SupportedSubaccounts } from './types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';; // Adjust this to match your backend URL
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';; // Adjust this to match your backend URL
 
 export async function createBot(config: BotConfigReq): Promise<string> {
   const response = await fetch(`${API_BASE_URL}/create`, {
@@ -102,6 +102,7 @@ interface GetPositionResponse {
 
 export async function getPosition(request: GetPositionRequest): Promise<GetPositionResponse> {
   // TODO: Replace with actual API call once backend is ready
+  console.log("sending request", request);
   return new Promise((resolve) => {
     setTimeout(() => {
       // Mock response with a random position between -100 and 100
