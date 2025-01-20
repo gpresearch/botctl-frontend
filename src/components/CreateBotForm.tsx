@@ -150,6 +150,21 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
     });
   }
 
+  const handleExchangeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const exchange = (e.target.value as SupportedExchangeNames);
+    setConfig({
+      ...config,
+      exchange: e.target.value,
+      exchange_instrument: {
+        ...config.exchange_instrument,
+        exchange: exchange
+      }
+    })
+    // TODO[alex]: Ask Andrew how to do this properly.
+    let subaccount = EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP[exchange][0]
+    setSelectedSubaccount(subaccount);
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -388,14 +403,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
         <label>Exchange:</label>
         <select
           value={config.exchange}
-          onChange={(e) => setConfig({
-            ...config,
-            exchange: e.target.value,
-            exchange_instrument: {
-              ...config.exchange_instrument,
-              exchange: e.target.value
-            }
-          })}
+          onChange={handleExchangeChange}
         >
           {Object.values(SupportedExchangeNames).map((exchange) => (
             <option key={exchange} value={exchange}>{exchange}</option>
@@ -406,7 +414,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
       <div className="form-group">
         <label>Instrument Type:</label>
         <select
-          value={instrumentType}
+          value={config.exchange_instrument.base}
           onChange={handleInstrumentTypeChange}
         >
           {Object.values(InstrumentType).map((type) => (
@@ -416,15 +424,26 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
       </div>
 
       <div className="form-group">
-        <label>Instrument:</label>
-        <select
-          value={`${config.exchange_instrument.base}/${config.exchange_instrument.counter}`}
-          onChange={handleInstrumentChange}
-        >
-          {Object.values(InstrumentPair).map((instrument) => (
-            <option key={instrument} value={instrument}>{instrument}</option>
-          ))}
-        </select>
+        <label>Base:</label>
+        <input
+              type="text"
+              value={config.exchange_instrument.base}
+              onChange={(e) => setConfig({ ...config, exchange_instrument: {
+                base: e.target.value
+              }} 
+            )}
+          />
+      </div>
+      <div className="form-group">
+      <label>Quote:</label>
+        <input
+              type="text"
+              value={config.exchange_instrument.base}
+              onChange={(e) => setConfig({ ...config, exchange_instrument: {
+                counter: e.target.value
+              }} 
+            )}
+          />
       </div>
 
       <div className="form-group">
