@@ -410,7 +410,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
       <div className="form-group">
         <label>Instrument Type:</label>
         <select
-          value={config.exchange_instrument.base}
+          value={config.exchange_instrument.type}
           onChange={handleInstrumentTypeChange}
         >
           {Object.values(InstrumentType).map((type) => (
