@@ -1,4 +1,4 @@
-import { BotConfigReq, BotResp, FrontendOrder, SupportedExchangeNames, PoolQuoterResp, SupportedSubaccounts } from './types';
+import { BotConfigReq, BotResp, FrontendOrder, SupportedExchangeNames, PoolQuoterResp, SupportedSubaccounts, ExchangeInstrument } from './types';
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';; // Adjust this to match your backend URL
 
@@ -88,27 +88,28 @@ export async function getActivePoolQuoters(): Promise<PoolQuoterResp[]> {
 }
 
 interface GetPositionRequest {
-  exchange: SupportedExchangeNames;
   subaccount: SupportedSubaccounts;
-  instrument: {
-    base: string;
-    quote: string;
-  };
+  exchange_instrument: ExchangeInstrument
 }
 
 interface GetPositionResponse {
-  position: number;
+  position: number | null;
 }
 
 export async function getPosition(request: GetPositionRequest): Promise<GetPositionResponse> {
   // TODO: Replace with actual API call once backend is ready
   console.log("sending request", request);
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Mock response with a random position between -100 and 100
-      resolve({
-        position: Math.round((Math.random() * 200 - 100) * 100) / 100
-      });
-    }, 100);
+
+  const response = await fetch(`${API_BASE_URL}/position`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(request),
   });
+  
+  if (!response.ok) {
+    throw new Error('Failed to get position');
+  }
+  return response.json();
 } 

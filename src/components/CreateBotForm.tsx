@@ -79,9 +79,8 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
       setIsLoadingPosition(true);
       try {
         const response = await getPosition({
-          exchange: config.exchange,
           subaccount: selectedSubaccount,
-          instrument: config.exchange_instrument
+          exchange_instrument: config.exchange_instrument
         });
         if (isMounted) {
           setCurrentPosition(response.position);
@@ -273,10 +272,9 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
         return (
           <>
             <div className="form-group">
-              <label>Target Position:</label>
+              <label>Target Position ({config.exchange_instrument.base}):</label>
               <input
-                type="number"
-                step="any"
+                type="text"
                 value={config.target_position}
                 onChange={(e) => setConfig({ ...config, target_position: parseFloat(e.target.value) })}
               />
@@ -298,8 +296,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
             <div className="form-group">
               <label>TWAP Quantity:</label>
               <input
-                type="number"
-                step="any"
+                type="text"
                 value={config.twap_qty}
                 onChange={(e) => setConfig({ ...config, twap_qty: parseFloat(e.target.value) })}
               />
@@ -307,8 +304,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
             <div className="form-group">
               <label>Width BPS:</label>
               <input
-                type="number"
-                step="any"
+                type="text"
                 value={config.width_bps}
                 onChange={(e) => setConfig({ ...config, width_bps: parseFloat(e.target.value) })}
               />
@@ -316,8 +312,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
             <div className="form-group">
               <label>Order Size USD:</label>
               <input
-                type="number"
-                step="any"
+                type="text"
                 value={config.order_size_usd}
                 onChange={(e) => setConfig({ ...config, order_size_usd: parseFloat(e.target.value) })}
               />
@@ -325,8 +320,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
             <div className="form-group">
               <label>Order Jitter USD:</label>
               <input
-                type="number"
-                step="any"
+                type="text"
                 value={config.order_jitter_usd}
                 onChange={(e) => setConfig({ ...config, order_jitter_usd: parseFloat(e.target.value) })}
               />
@@ -334,25 +328,25 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
             <div className="form-group">
               <label>Price Tolerance BPS:</label>
               <input
-                type="number"
-                step="any"
+                type="text"
                 value={config.price_tol_bps}
                 onChange={(e) => setConfig({ ...config, price_tol_bps: parseFloat(e.target.value) })}
               />
             </div>
             <div className="form-group">
               <label>Allow Cross:</label>
-              <input
-                type="checkbox"
-                checked={config.allow_cross}
-                onChange={(e) => setConfig({ ...config, allow_cross: e.target.checked })}
-              />
+              <select
+                value={config.allow_cross.toString()}
+                onChange={(e) => setConfig({ ...config, allow_cross: e.target.value === 'true' })}
+              >
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </select>
             </div>
             <div className="form-group">
               <label>Min Cross BPS:</label>
               <input
-                type="number"
-                step="any"
+                type="text"
                 value={config.min_cross_bps}
                 onChange={(e) => setConfig({ ...config, min_cross_bps: parseFloat(e.target.value) })}
               />
@@ -360,8 +354,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
             <div className="form-group">
               <label>Max Cross BPS:</label>
               <input
-                type="number"
-                step="any"
+                type="text"
                 value={config.max_cross_bps}
                 onChange={(e) => setConfig({ ...config, max_cross_bps: parseFloat(e.target.value) })}
               />
