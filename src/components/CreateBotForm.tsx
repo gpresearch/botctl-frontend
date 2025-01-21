@@ -3,7 +3,6 @@ import {
   SupportedExchangeNames, 
   SupportedStrategyType,
   BotConfigReq,
-  InstrumentPair,
   SupportedSubaccounts,
   SUBACCOUNT_TO_SECRET_PATH_MAP,
   EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP,
