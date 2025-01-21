@@ -26,6 +26,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
     const fetchBots = async () => {
         console.log("Feting bots");
       const activeBots = await getActiveBots();
+      console.log("Got active bots", activeBots);
       setBots(activeBots);
     };
 
@@ -76,10 +77,11 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
         const bot = bots.find(b => b.id === editingField.id);
         if (!bot) return;
 
+        let updatedConfig = { ...bot.config };
         // Update local state immediately
         setBots(currentBots => currentBots.map(b => {
           if (b.id === editingField.id) {
-            const updatedConfig = { ...b.config };
+            updatedConfig = { ...b.config };
             if (updatedConfig.type === bot.config.type) {
               updatedConfig.config = {
                 ...updatedConfig.config,
@@ -94,9 +96,13 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
           return b;
         }));
 
-        // Send update to backend
+        // Need to update config here bc above setState seems to execute after this function completes.
+        bot.config.config = {
+          ...updatedConfig.config,
+          [editingField.field]: editingField.value
+        };
+  
         await modifyBot(editingField.id, bot.config);
-        
         setNotification('Updated value sent to bot');
         setEditingField(null);
       } catch (error) {
