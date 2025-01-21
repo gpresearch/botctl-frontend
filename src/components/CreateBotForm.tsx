@@ -425,6 +425,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
               type="text"
               value={config.exchange_instrument.base}
               onChange={(e) => setConfig({ ...config, exchange_instrument: {
+                ...config.exchange_instrument,
                 base: e.target.value
               }} 
             )}
@@ -436,6 +437,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
               type="text"
               value={config.exchange_instrument.counter}
               onChange={(e) => setConfig({ ...config, exchange_instrument: {
+                ...config.exchange_instrument,
                 counter: e.target.value
               }} 
             )}
