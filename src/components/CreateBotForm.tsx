@@ -64,7 +64,6 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
   const [strategyType, setStrategyType] = useState<SupportedStrategyType>(SupportedStrategyType.LIMIT_QUOTER);
   const [config, setConfig] = useState<any>(defaultConfigs[SupportedStrategyType.LIMIT_QUOTER]);
   const [selectedSubaccount, setSelectedSubaccount] = useState<SupportedSubaccounts>(SupportedSubaccounts.binance1);
-  const [instrumentType, setInstrumentType] = useState<InstrumentType>(InstrumentType.PERP);
   const [currentPosition, setCurrentPosition] = useState<number | null>(null);
   const [isLoadingPosition, setIsLoadingPosition] = useState(false);
 
@@ -115,23 +114,22 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
     setConfig(defaultConfigs[newType]);
   };
 
-  const handleInstrumentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const ins = e.target.value as InstrumentPair;
-    const [base, counter] = ins.split('/');
-    setConfig({
-      ...config,
-      exchange_instrument: { 
-        base,
-        counter,
-        exchange: config.exchange,
-        type: instrumentType
-      }
-    });
-  };
+  // const handleInstrumentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const ins = e.target.value as InstrumentPair;
+  //   const [base, counter] = ins.split('/');
+  //   setConfig({
+  //     ...config,
+  //     exchange_instrument: { 
+  //       base,
+  //       counter,
+  //       exchange: config.exchange,
+  //       type: instrumentType
+  //     }
+  //   });
+  // };
 
   const handleInstrumentTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = e.target.value as InstrumentType;
-    setInstrumentType(newType);
     setConfig({
       ...config,
       exchange_instrument: {
@@ -152,17 +150,16 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
 
   const handleExchangeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const exchange = (e.target.value as SupportedExchangeNames);
+    let subaccount = EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP[exchange][0]
     setConfig({
       ...config,
       exchange: e.target.value,
       exchange_instrument: {
         ...config.exchange_instrument,
         exchange: exchange
-      }
+      },
+      subaccount_secret_path: SUBACCOUNT_TO_SECRET_PATH_MAP[subaccount]
     })
-    // TODO[alex]: Ask Andrew how to do this properly.
-    let subaccount = EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP[exchange][0]
-    setSelectedSubaccount(subaccount);
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -438,7 +435,7 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
       <label>Quote:</label>
         <input
               type="text"
-              value={config.exchange_instrument.base}
+              value={config.exchange_instrument.counter}
               onChange={(e) => setConfig({ ...config, exchange_instrument: {
                 counter: e.target.value
               }} 
