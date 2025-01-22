@@ -12,7 +12,8 @@ export enum SupportedSubaccounts {
   binance_alex_testnet = 'binance_alex_testnet',
   gate1sinclair = 'gate1sinclair',
   bybitengprotoacct = 'bybitengprotoacct',
-  bybit_alex_testnet = 'bybit_alex_testnet'
+  bybit_alex_testnet = 'bybit_alex_testnet',
+  massive_bedroom = 'massive-bedroom'
 }
 /*
 Hardcoded for now with mappings to secrets paths below.
@@ -21,7 +22,7 @@ See below comment in `BaseConfig` for more details on TODO approach.
 */
 export const EXCHANGE_TO_SUPPORTED_SUBACCOUNTS_MAP = {
   [SupportedExchangeNames.BINANCEUSDM]: [SupportedSubaccounts.binance1,SupportedSubaccounts.binance4,SupportedSubaccounts.binance_alex_testnet],
-  [SupportedExchangeNames.BYBIT]: [SupportedSubaccounts.bybitengprotoacct,SupportedSubaccounts.bybit_alex_testnet],
+  [SupportedExchangeNames.BYBIT]: [SupportedSubaccounts.bybitengprotoacct,SupportedSubaccounts.bybit_alex_testnet,SupportedSubaccounts.massive_bedroom],
   [SupportedExchangeNames.METEORA]: [SupportedSubaccounts.gate1sinclair],
 }
 
@@ -32,7 +33,7 @@ export const SUBACCOUNT_TO_SECRET_PATH_MAP = {
   [SupportedSubaccounts.bybitengprotoacct]: '/proto/BYBIT_SECRET',
   [SupportedSubaccounts.bybit_alex_testnet]: '/alex/basis_bot/BYBIT_SECRET',
   [SupportedSubaccounts.binance_alex_testnet]: '/alex/basis_bot/BINANCEUSDM_SECRET',
-
+  [SupportedSubaccounts.massive_bedroom]: '/proto/api-keys/bybit/massive-bedroom',
 };
 
 
