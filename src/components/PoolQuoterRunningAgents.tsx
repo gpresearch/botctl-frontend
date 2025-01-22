@@ -21,10 +21,12 @@ const ProcessManagerTable: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
 
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8032';
+
     useEffect(() => {
         const fetchProcesses = async () => {
             try {
-                const response = await fetch("http://127.0.0.1:8032/api/processes");
+                const response = await fetch(`${API_BASE_URL}/api/processes`);
                 if (!response.ok) {
                     throw new Error(`Failed to fetch: ${response.statusText}`);
                 }
@@ -40,6 +42,22 @@ const ProcessManagerTable: React.FC = () => {
         fetchProcesses();
     }, []);
 
+    const deleteProcess = async (pid: number) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/delete/processes/${pid}`, {
+                method: "DELETE",
+            });
+            if (response.ok) {
+                setProcesses(processes.filter((process) => process.pid !== pid));
+            } else {
+                const errorData = await response.json();
+                setError(`Failed to delete process: ${errorData.detail}`);
+            }
+        } catch (error) {
+            setError(`Error deleting process: ${error}`);
+        }
+    };
+
     if (loading) {
         return <CircularProgress />;
     }
@@ -51,7 +69,7 @@ const ProcessManagerTable: React.FC = () => {
     // Handle process termination
     const handleKillProcess = async (pid: number) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8032/api/processes/${pid}`, {
+            const response = await fetch(`${API_BASE_URL}/api/processes/${pid}`, {
                 method: "DELETE",
             });
             if (!response.ok) {
@@ -76,6 +94,7 @@ const ProcessManagerTable: React.FC = () => {
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Status</TableCell>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Start Time</TableCell>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Action</TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Delete</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -94,6 +113,15 @@ const ProcessManagerTable: React.FC = () => {
                                     onClick={() => handleKillProcess(process.pid)}
                                 >
                                     Kill
+                                </Button>
+                            </TableCell>
+                            <TableCell>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    onClick={() => deleteProcess(process.pid)}
+                                >
+                                    Delete
                                 </Button>
                             </TableCell>
                         </TableRow>

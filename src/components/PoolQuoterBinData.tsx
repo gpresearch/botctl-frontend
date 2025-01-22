@@ -1,7 +1,9 @@
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import PoolQuoterBinDataChart from "./PoolQuoterBinDataChart.tsx";
-import {Container} from "@mui/material";
+import {Container, Alert, Snackbar, Box} from "@mui/material";
 import Grid from "@mui/material/Grid2";
+import SyncIcon from '@mui/icons-material/Sync';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // Define the interface for the bin data response
 interface Bin {
@@ -29,49 +31,63 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
     const [binData, setBinData] = useState<BinData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+    const [refreshedAt, setRefreshedAt] = useState('');
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8032';
+
+    const fetchBinData = async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/bins?token_pair=${tokenPair}`);
+            if (!response.ok) {
+                throw new Error(`Error fetching bin data: ${response.statusText}`);
+            }
+            const data: BinData = await response.json();
+            setBinData(data);
+        } catch (err: unknown) {
+            setError((err as Error).message);
+            setSnackbarOpen(true);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchBinData = async () => {
-            try {
-                const response = await fetch(`http://127.0.0.1:8032/api/bins?token_pair=${tokenPair}`);
-                if (!response.ok) {
-                    throw new Error(`Error fetching bin data: ${response.statusText}`);
-                }
-                const data: BinData = await response.json();
-                setBinData(data);
-            } catch (err: unknown) {
-                setError((err as Error).message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchBinData();
-    }, []);
+    }, [tokenPair]);
+
+    const handleRefresh = () => {
+        const time = new Date().toLocaleTimeString();
+        setRefreshedAt(time.toString());
+        fetchBinData();
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+    };
 
     if (loading) {
         return <div>Loading chart...</div>;
     }
 
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    if (!binData) {
-        return <div>No data available.</div>;
+    if (!binData && !loading) {
+        return (
+            <Container sx={{ textAlign: "center", padding: "2rem", color: "white" }}>
+                <div>No data available for the selected token pair.</div>
+            </Container>
+        );
     }
 
     // Map the bin data to chart format
-    const xAxisLabels = binData.bins.map((bin) => `Bin: ${bin.bin_pos}`);
+    const xAxisLabels = binData?.bins.map((bin) => `Bin: ${bin.bin_pos}`) || [];
     const seriesData = [
-        { data: binData.bins.map((bin) => bin.qty), color: '#af3df5' },
+        { data: binData?.bins.map((bin) => bin.qty) || [], color: '#af3df5' },
     ];
 
     function formatNumber(number: number) {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD'
-        }).format(number)
+            currency: 'USD',
+        }).format(number);
     }
 
     return (
@@ -82,7 +98,23 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
             padding: '12px',
             background: "#141626"
         }}>
-            <Grid container spacing={1} sx={{flexGrow: 1}}>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+                {error ? (
+                    <Alert severity="error" onClose={handleCloseSnackbar}>
+                        {error}
+                    </Alert>
+                ) : (
+                    <></>
+                )}
+            </Snackbar>
+
+
+            <Grid container spacing={1} sx={{ flexGrow: 1 }}>
                 <Grid size={12}>
                     <div style={{
                         flexGrow: 1,
@@ -93,19 +125,29 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
                         paddingTop: '12px',
                     }}>
                         {tokenPair}
+                        {
+                            refreshedAt && <Box sx={{fontSize: '8px', float: 'right', position: 'absolute'}}>Refreshed at: {refreshedAt}</Box>
+                        }
+                        {
+                            !loading ? (
+                                <SyncIcon sx={{float: 'right'}} onClick={handleRefresh} />
+                            ) : (
+                                <CircularProgress sx={{float: 'right'}} size="24px"/>
+                            )
+                        }
                     </div>
                     <hr style={{
                         borderTop: '1px solid #21252e',
                         borderBottom: '1px solid #21252e',
                         borderLeft: '1px solid #21252e',
                         borderRight: '1px solid #21252e'
-                    }}/>
-
+                    }} />
                 </Grid>
+
                 <Grid size={6}>
-                    <Grid container spacing={0} sx={{flexGrow: 1}}>
+                    <Grid container spacing={0} sx={{ flexGrow: 1 }}>
                         <Grid size={12}>
-                        <div style={{
+                            <div style={{
                                 color: 'grey',
                                 fontSize: 10,
                                 textAlign: 'left',
@@ -123,7 +165,7 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
                                 fontSize: 12,
                                 fontWeight: 'bold',
                             }}>
-                                {binData.token_x_symbol} - {binData.token_x_base} - {formatNumber(binData.total_token_x_usd)}
+                                {binData?.token_x_symbol} - {binData?.token_x_base} - {formatNumber(binData?.total_token_x_usd || 0)}
                             </div>
                         </Grid>
                         <Grid size={12}>
@@ -134,14 +176,14 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
                                 fontSize: 12,
                                 fontWeight: 'bold',
                             }}>
-                                {binData.token_y_symbol} - {binData.token_y_base} - {formatNumber(binData.total_token_y_usd)}
+                                {binData?.token_y_symbol} - {binData?.token_y_base} - {formatNumber(binData?.total_token_y_usd || 0)}
                             </div>
                         </Grid>
                     </Grid>
-
                 </Grid>
+
                 <Grid size={6}>
-                    <Grid container spacing={0} sx={{flexGrow: 1}}>
+                    <Grid container spacing={0} sx={{ flexGrow: 1 }}>
                         <Grid size={12}>
                             <div style={{
                                 color: 'grey',
@@ -161,7 +203,7 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
                                 fontWeight: 'bold',
                                 paddingBottom: '14px'
                             }}>
-                                {formatNumber(binData.total_token_x_usd + binData.total_token_y_usd)}
+                                {formatNumber((binData?.total_token_x_usd || 0) + (binData?.total_token_y_usd || 0))}
                             </div>
                         </Grid>
                     </Grid>
@@ -173,10 +215,10 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
                 borderBottom: '1px solid #21252e',
                 borderLeft: '1px solid #21252e',
                 borderRight: '1px solid #21252e'
-            }}/>
+            }} />
 
-            <div style={{paddingLeft: '-24px', marginTop: '12px', borderRadius: '2rem'}}>
-                <PoolQuoterBinDataChart xAxisLabels={xAxisLabels} seriesData={seriesData}/>
+            <div style={{ paddingLeft: '-24px', marginTop: '12px', borderRadius: '2rem' }}>
+                <PoolQuoterBinDataChart xAxisLabels={xAxisLabels} seriesData={seriesData} />
             </div>
         </Container>
     );

@@ -27,7 +27,7 @@ const PoolQuoterCreateAgent = () => {
     const [pool, setPool] = useState('');
     const [strategy, setStrategy] = useState('');
     const [notionalUSD, setNotional] = useState('');
-    const [allocation, setAllocation] = useState('');
+    const [pctSpot, setPctSpot] = useState('');
     const [priceDeviation, setPriceDeviation] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
@@ -44,8 +44,8 @@ const PoolQuoterCreateAgent = () => {
         setNotional(event.target.value);
     };
 
-    const handleAllocationInput = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setAllocation(event.target.value);
+    const handlePctSpotInput = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setPctSpot(event.target.value);
     };
 
     const handlePriceDeviationInput = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -65,7 +65,7 @@ const PoolQuoterCreateAgent = () => {
             setErrorMsg("Notional USD must be a positive number.");
             return false;
         }
-        if (!allocation || isNaN(Number(allocation)) || Number(allocation) <= 0 || Number(allocation) > 100) {
+        if (!pctSpot || isNaN(Number(pctSpot)) || Number(pctSpot) <= 0 || Number(pctSpot) > 100) {
             setErrorMsg("Allocation must be a number between 1 and 100.");
             return false;
         }
@@ -77,19 +77,21 @@ const PoolQuoterCreateAgent = () => {
         return true;
     };
 
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8032';
+
     const createAgent = async () => {
         if (!validateInput()) return;
 
         try {
-            const response = await fetch('http://127.0.0.1:8032/api/create-agent', {
+            const response = await fetch(`${API_BASE_URL}/api/create-agent`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     pool,
                     strategy,
                     notional_usd: Number(notionalUSD),
-                    allocation: Number(allocation),
-                    price_deviation: Number(priceDeviation),
+                    pct_spot: Number(pctSpot),
+                    price_deviation_pct: Number(priceDeviation),
                 }),
             });
 
@@ -160,11 +162,11 @@ const PoolQuoterCreateAgent = () => {
                     </Grid>
 
                     <Grid size={4}>
-                        <div style={{ color: 'white', fontWeight: 'bold', paddingBottom: '12px' }}>% Allocation</div>
+                        <div style={{ color: 'white', fontWeight: 'bold', paddingBottom: '12px' }}>% Allocation to Spot</div>
                         <TextField
                             type="number"
-                            value={allocation}
-                            onChange={handleAllocationInput}
+                            value={pctSpot}
+                            onChange={handlePctSpotInput}
                             sx={{ width: '80%', backgroundColor: '#1e212b', input: { color: 'white', fontWeight: 'bold' } }}
                         />
                     </Grid>
