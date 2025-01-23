@@ -31,6 +31,7 @@ const UnifiedUI = () => {
                     maxWidth="lg"
                     sx={{
                         backgroundColor: "#0b0f19",
+                        paddingBottom: "2rem",
                     }}
                 >
                     <ButtonAppBar onPageChange={handlePageChange} />

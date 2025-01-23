@@ -14,7 +14,6 @@ const PoolQuoterBinData = ({xAxisLabels, seriesData }: BinDataChartProps) => {
             leftAxis={undefined}
             bottomAxis={undefined}
             sx={{
-                marginLeft: '-24px',
                 //change left yAxis label styles
                 "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel":{
                     display: 'none'
@@ -31,13 +30,17 @@ const PoolQuoterBinData = ({xAxisLabels, seriesData }: BinDataChartProps) => {
                 // leftAxis Line Styles
                 "& .MuiChartsAxis-left .MuiChartsAxis-line":{
                     display: 'none'
+                },
+
+                "& .MuiBarElement-root": {
+                    width: "2px !important",
                 }
             }}
             series={seriesData}
             height={200}
             xAxis={[{ data: xAxisLabels, scaleType: 'band'}]}
-            yAxis={[{  sx: {color: 'white'} ,tickLabelStyle: {color:'white'}, labelStyle: {color:'white'} }]}
-            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
+            yAxis={[{  sx: {color: 'white'}, stroke: 'none', tickLabelStyle: {color:'white'}, labelStyle: {color:'white'} }]}
+            margin={{ top: 0, bottom: 20, left: 0, right: 0 }}
         />
     );
 };

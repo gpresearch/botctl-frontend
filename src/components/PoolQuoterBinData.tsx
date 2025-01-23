@@ -4,14 +4,19 @@ import {Container, Alert, Snackbar, Box} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import SyncIcon from '@mui/icons-material/Sync';
 import CircularProgress from '@mui/material/CircularProgress';
+import {MakeOptional} from "@mui/x-charts/models/helpers";
+import {BarSeriesType} from "@mui/x-charts/models/seriesType/bar";
 
 // Define the interface for the bin data response
 interface Bin {
     bin_pos: string;
     qty: number;
+    price: number;
 }
 
 interface BinData {
+    active_bin: number;
+    strategy_stats: StrategyStats;
     position_bin_ts: string;
     bins: Bin[];
     token_x_symbol: string;
@@ -20,6 +25,14 @@ interface BinData {
     token_y_base: number;
     total_token_x_usd: number;
     total_token_y_usd: number;
+}
+
+interface StrategyStats {
+    last_updated: number;
+    pct_allocation: number;
+    pct_deviation: number;
+    strategy_id: string;
+    total_notional_usd: number
 }
 
 // Props for the component
@@ -55,6 +68,17 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
         fetchBinData();
     }, [tokenPair]);
 
+    // Auto-refresh data every 5 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetchBinData();
+            setRefreshedAt(new Date().toLocaleTimeString());
+        }, 5000); // Update every 5000ms (5 seconds)
+
+        // Cleanup the interval on component unmount
+        return () => clearInterval(interval);
+    }, [tokenPair]);
+
     const handleRefresh = () => {
         const time = new Date().toLocaleTimeString();
         setRefreshedAt(time.toString());
@@ -79,8 +103,73 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
 
     // Map the bin data to chart format
     const xAxisLabels = binData?.bins.map((bin) => `Bin: ${bin.bin_pos}`) || [];
-    const seriesData = [
-        { data: binData?.bins.map((bin) => bin.qty) || [], color: '#af3df5' },
+
+    // ID of the active bin to highlight
+    const activeBinId = binData?.active_bin;
+    const activeBinIdNumber = activeBinId !== undefined ? Number(activeBinId) : -1; // Use -1 as default if undefined
+
+    let activeBinIndex = 0;
+    binData?.bins.forEach((bin, ix) => {
+        if (Number(bin.bin_pos) == Number(activeBinIdNumber)) {
+            activeBinIndex = ix
+        }
+    })
+
+    // Find the midpoint index and its price
+    const midpointIndex = Math.floor((binData?.bins?.length ?? 0) / 2);
+    const midpointPrice = binData?.bins[midpointIndex]?.price ?? 0;
+    const pctDeviation = binData?.strategy_stats?.pct_deviation || 0;
+
+    // Calculate deviation thresholds
+    const lowerThreshold = midpointPrice * (1 - pctDeviation);
+    const upperThreshold = midpointPrice * (1 + pctDeviation);
+
+    // Find bin positions closest to the thresholds
+    let lowerBinPos: string | null = null;
+    let upperBinPos: string | null = null;
+
+    binData?.bins.forEach(bin => {
+        if (!lowerBinPos && bin.price >= lowerThreshold) {
+            lowerBinPos = bin.bin_pos;
+        }
+        if (!upperBinPos && bin.price >= upperThreshold) {
+            upperBinPos = bin.bin_pos;
+        }
+    });
+
+    const seriesData: MakeOptional<BarSeriesType, 'type'>[] = [
+        // Series for bins to the left of the midpoint
+        {
+            type: 'bar',
+            data: binData?.bins.map(bin => (Number(bin.bin_pos) < Number(binData?.bins[activeBinIndex].bin_pos) ? bin.qty : 0)) || [],
+            color: '#0daed4',
+        },
+        // Series for bins to the right of the midpoint
+        {
+            type: 'bar',
+            data: binData?.bins.map(bin => (Number(bin.bin_pos) >=  Number(binData?.bins[activeBinIndex].bin_pos) ? bin.qty : 0)) || [],
+            color: '#af3df5', // Right series color
+        },
+        // Series for the active bin
+        {
+            type: 'bar',
+            data: binData?.bins.map((bin) =>
+                Number(bin.bin_pos) === activeBinIdNumber ? bin.qty : null
+            ) || [],
+            color: '#f54242',
+        },
+        // Series for the lower threshold
+        {
+            type: 'bar',
+            data: binData?.bins.map(bin => (Number(bin.bin_pos) === Number(lowerBinPos)-1 ? binData?.bins[midpointIndex].qty/2 : 0)) || [],
+            color: 'white',
+        },
+        // Series for the upper threshold
+        {
+            type: 'bar',
+            data: binData?.bins.map(bin => (Number(bin.bin_pos) === Number(upperBinPos) ? binData?.bins[midpointIndex].qty/2 : 0)) || [],
+            color: 'white',
+        },
     ];
 
     function formatNumber(number: number) {
