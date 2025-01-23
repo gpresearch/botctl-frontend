@@ -57,6 +57,9 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
             const data: BinData = await response.json();
             setBinData(data);
         } catch (err: unknown) {
+            setBinData(null)
+            setLoading(false);
+            console.log(err)
             setError((err as Error).message);
             setSnackbarOpen(true);
         } finally {
@@ -120,6 +123,8 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
     const midpointPrice = binData?.bins[midpointIndex]?.price ?? 0;
     const pctDeviation = binData?.strategy_stats?.pct_deviation || 0;
 
+    console.log(midpointPrice);
+    console.log(pctDeviation);
     // Calculate deviation thresholds
     const lowerThreshold = midpointPrice * (1 - pctDeviation);
     const upperThreshold = midpointPrice * (1 + pctDeviation);

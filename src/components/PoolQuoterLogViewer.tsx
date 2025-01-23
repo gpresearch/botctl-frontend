@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import {Container} from "@mui/material";
 
 const PoolQuoterLogViewer = ({ tokenPair }: { tokenPair: string }) => {
     const [logs, setLogs] = useState<string[]>([]);
@@ -46,8 +47,10 @@ const PoolQuoterLogViewer = ({ tokenPair }: { tokenPair: string }) => {
 
     return (
         <div style={{ padding: '1rem', backgroundColor: '#141626', color: 'white', borderRadius: '10px', position: 'relative' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2 style={{ margin: 0 }}>Log Stream for {tokenPair}</h2>
+            <div style={{ display: 'flex' }}>
+                <Container sx={{ color: "white", textAlign: "left", fontWeight: '600', fontSize: '18px', fontFamily: 'Manrope' }}>
+                    Log Stream for {tokenPair.toString()}
+                </Container>
                 <IconButton onClick={toggleVisibility} sx={{ color: 'white' }}>
                     {isVisible ? <VisibilityOffIcon /> : <VisibilityIcon />}
                 </IconButton>

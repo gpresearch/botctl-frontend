@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, CircularProgress } from "@mui/material";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    Typography,
+    CircularProgress,
+    Container
+} from "@mui/material";
 import Button from "@mui/material/Button";
 
 interface ProcessConfig {
@@ -83,9 +94,9 @@ const ProcessManagerTable: React.FC = () => {
 
     return (
         <TableContainer component={Paper} sx={{ backgroundColor: "#141626", borderRadius: '1rem', border: '1px solid #282940' }}>
-            <Typography variant="h6" align="center" sx={{ margin: "1rem 0", color: "white", textAlign: "left", paddingLeft: '24px', fontWeight: '800' }}>
+            <Container sx={{ margin: "24px 0", color: "white", textAlign: "left", paddingLeft: '24px', fontWeight: '600', fontSize: '18px', fontFamily: 'Manrope' }}>
                 Running Agents
-            </Typography>
+            </Container>
             <Table>
                 <TableHead>
                     <TableRow>
