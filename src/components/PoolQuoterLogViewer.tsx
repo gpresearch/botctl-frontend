@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import {Container} from "@mui/material";
+import { Container } from "@mui/material";
 
 const PoolQuoterLogViewer = ({ tokenPair }: { tokenPair: string }) => {
     const [logs, setLogs] = useState<string[]>([]);
@@ -18,8 +18,8 @@ const PoolQuoterLogViewer = ({ tokenPair }: { tokenPair: string }) => {
         eventSource.onmessage = (event) => {
             setLogs((prevLogs) => {
                 const newLogs = [...prevLogs, event.data];
-                // Keep only the last 100 log lines
-                return newLogs.slice(-100);
+                // Keep only the last 1000 log lines
+                return newLogs.slice(-1000);
             });
         };
 
