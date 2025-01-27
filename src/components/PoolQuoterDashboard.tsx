@@ -6,6 +6,8 @@ import {useState} from "react";
 import PoolQuoterCreateAgent from "./PoolQuoterCreateAgent.tsx";
 import PoolQuoterRunningAgents from "./PoolQuoterRunningAgents.tsx";
 import PoolQuoterLogViewer from "./PoolQuoterLogViewer.tsx";
+import Box from "@mui/material/Box";
+import StatusIcon from "./PoolQuoterStatusIcon.tsx";
 
 
 const PoolQuoterDashboard = () => {
@@ -44,8 +46,15 @@ const PoolQuoterDashboard = () => {
     return (
         <Container>
             <Grid container spacing={0}>
-                <Grid size={12} sx={{ flexGrow: 1, textAlign: "left", color: 'white' }}>
+                <Grid size={6} sx={{  textAlign: "left", color: 'white' }}>
                     <h2 style={{fontFamily: 'Manrope'}}>Pool Quoter (MVP)</h2>
+                </Grid>
+                <Grid size={6}>
+                    <Box sx={{ padding: '2rem', textAlign: 'right', marginRight: '16px' }}>
+                        <StatusIcon service="pool-monitor" />
+                        <StatusIcon service="redis" />
+                        <StatusIcon service="dlmm" />
+                    </Box>
                 </Grid>
             </Grid>
             <Grid container spacing={2}>
