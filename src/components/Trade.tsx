@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { ExchangeNames, InstrumentPair, Order } from '../types';
+import { SupportedExchangeNames, InstrumentPair, FrontendOrder } from '../types';
 import { getOpenOrders } from '../api';
 import './Trade.css';
 
 export function Trade() {
-  const [selectedExchange, setSelectedExchange] = useState<ExchangeNames>(ExchangeNames.BINANCEUSDM);
+  const [selectedExchange, setSelectedExchange] = useState<SupportedExchangeNames>(SupportedExchangeNames.BINANCEUSDM);
   const [selectedInstrument, setSelectedInstrument] = useState<InstrumentPair>(InstrumentPair.BTC_USDT);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<FrontendOrder[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,9 +47,9 @@ export function Trade() {
             <label>Exchange:</label>
             <select
               value={selectedExchange}
-              onChange={(e) => setSelectedExchange(e.target.value as ExchangeNames)}
+              onChange={(e) => setSelectedExchange(e.target.value as SupportedExchangeNames)}
             >
-              {Object.values(ExchangeNames).map((exchange) => (
+              {Object.values(SupportedExchangeNames).map((exchange) => (
                 <option key={exchange} value={exchange}>
                   {exchange}
                 </option>
