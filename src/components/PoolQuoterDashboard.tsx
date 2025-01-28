@@ -8,6 +8,7 @@ import PoolQuoterRunningAgents from "./PoolQuoterRunningAgents.tsx";
 import PoolQuoterLogViewer from "./PoolQuoterLogViewer.tsx";
 import Box from "@mui/material/Box";
 import StatusIcon from "./PoolQuoterStatusIcon.tsx";
+import ClaimedFeesViewer from "./PoolQuoterClaimedFeesViewer.tsx";
 
 
 const PoolQuoterDashboard = () => {
@@ -29,6 +30,9 @@ const PoolQuoterDashboard = () => {
                     </Grid>
                     <Grid size={6}>
                         <PoolQuoterRunningAgents />
+                    </Grid>
+                    <Grid size={12} sx={{  textAlign: "left", color: 'white' }}>
+                        <ClaimedFeesViewer/>
                     </Grid>
                     <Grid size={12}>
                         <PoolQuoterLogViewer tokenPair={"TNSR_USDC"} />
