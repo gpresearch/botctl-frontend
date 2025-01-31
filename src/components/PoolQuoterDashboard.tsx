@@ -19,31 +19,42 @@ const PoolQuoterDashboard = () => {
         setCurrentPage(page);
     };
 
-    const tokenPair = "TNSR/USDC"
-
     const renderDashboard = () => {
         switch (currentPage) {
             case "all_pools":
-                return <Grid container spacing={2}>
-                    <Grid size={6}>
-                        <PoolQuoterBinData tokenPair={tokenPair} />
+                return (
+                    <Grid container spacing={2}>
+                        <Grid size={12}>
+                            <PoolQuoterRunningAgents />
+                        </Grid>
+                        <Grid size={12} sx={{  textAlign: "left", color: 'white' }}>
+                            <ClaimedFeesViewer/>
+                        </Grid>
+                        <Grid size={6}>
+                            <PoolQuoterBinData tokenPair={"TNSR/USDC"} />
+                        </Grid>
+                        <Grid size={6}>
+                            <PoolQuoterBinData tokenPair={"USDC/IO"} />
+                        </Grid>
+                        <Grid size={6}>
+                            <PoolQuoterBinData tokenPair={"DRIFT/USDC"} />
+                        </Grid>
                     </Grid>
-                    <Grid size={6}>
-                        <PoolQuoterRunningAgents />
-                    </Grid>
-                    <Grid size={12} sx={{  textAlign: "left", color: 'white' }}>
-                        <ClaimedFeesViewer/>
-                    </Grid>
-                    <Grid size={12}>
-                        <PoolQuoterLogViewer tokenPair={"TNSR_USDC"} />
-                    </Grid>
-                </Grid>;
+                )
             case "create_agent":
                 return <PoolQuoterCreateAgent/>;
-            case "tnsr/usdc":
-                return <PoolQuoterBinData tokenPair={tokenPair} />
             default:
-                return <div>error</div>
+                return (
+                    <Grid>
+                        <Grid size={12}>
+                            <PoolQuoterBinData tokenPair={currentPage} />
+                        </Grid>
+                        <br/>
+                        <Grid size={12}>
+                            <PoolQuoterLogViewer tokenPair={currentPage.replace("/", "_")} />
+                        </Grid>
+                    </Grid>
+                )
         }
     }
 
@@ -81,7 +92,13 @@ const PoolQuoterDashboard = () => {
                             </div>
                         </Container>
                         <Container sx={{ borderRadius: '10px' }}>
-                            <LhavaButton onClick={() => handlePageChange("tnsr/usdc")}>TNSR/USDC</LhavaButton>
+                            <LhavaButton onClick={() => handlePageChange("TNSR/USDC")}>TNSR/USDC</LhavaButton>
+                        </Container>
+                        <Container sx={{ borderRadius: '10px' }}>
+                            <LhavaButton onClick={() => handlePageChange("USDC/IO")}>IO/USDC</LhavaButton>
+                        </Container>
+                        <Container sx={{ borderRadius: '10px' }}>
+                            <LhavaButton onClick={() => handlePageChange("DRIFT/USDC")}>DRIFT/USDC</LhavaButton>
                         </Container>
                     </Grid>
                 </Grid>

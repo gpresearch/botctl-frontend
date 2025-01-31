@@ -58,6 +58,10 @@ const ClaimedFeesViewer: React.FC = () => {
                 return "TNSR";
             case "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v":
                 return "USDC";
+            case "BZLbGTNCSFfoth2GYDtwr7e4imWzpR5jqcUuGEwr646K":
+                return "IO"
+            case "ESkg5Jjd9b5iCg7GfHT3LrcYtxQ7saCctznpncG4wxuL":
+                return "DRIFT"
             default:
                 return address;
         }
@@ -184,7 +188,7 @@ const ClaimedFeesViewer: React.FC = () => {
                         <div>Total Fees by Token</div>
                         <Grid container spacing={2}>
                             {Object.entries(metrics.totalFeesByMint).map(([mint, total]) => (
-                                <Grid size={6} key={mint}>
+                                <Grid size={12} key={mint}>
                                     <div style={{fontSize: '24px'}}>
                                         <span style={{fontSize: '14px'}}>{convertAddressToSymbol(mint)}:</span> {total.toFixed(3)}
                                     </div>
@@ -231,7 +235,7 @@ const ClaimedFeesViewer: React.FC = () => {
             <TableContainer
                 component={Paper}
                 sx={{
-                    maxHeight: "300px",
+                    maxHeight: "600px",
                     backgroundColor: "#1b1f2a",
                     border: "1px solid #21252e",
                     borderRadius: "10px",

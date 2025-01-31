@@ -9,7 +9,6 @@ interface UnifiedUIDashboardProps {
 
 const UnifiedUIDashboard = ({currentPage}: UnifiedUIDashboardProps) => {
     const renderPage = () => {
-        console.log(currentPage)
         switch (currentPage) {
             case "PoolQuoter":
                 return <PoolQuoterDashboard/>;

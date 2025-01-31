@@ -136,6 +136,8 @@ const PoolQuoterCreateAgent = () => {
                         >
                             <MenuItem value=""><em>None</em></MenuItem>
                             <MenuItem value="TNSR/USDC">TNSR/USDC</MenuItem>
+                            <MenuItem value="USDC/IO">USDC/IO</MenuItem>
+                            <MenuItem value="DRIFT/USDC">DRIFT/USDC</MenuItem>
                         </Select>
                     </Grid>
 
