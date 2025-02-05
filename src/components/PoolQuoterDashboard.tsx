@@ -39,6 +39,9 @@ const PoolQuoterDashboard = () => {
                         <Grid size={6}>
                             <PoolQuoterBinData tokenPair={"DRIFT/USDC"} />
                         </Grid>
+                        <Grid size={6}>
+                            <PoolQuoterBinData tokenPair={"SONIC/USDC"} />
+                        </Grid>
                     </Grid>
                 )
             case "create_agent":
@@ -99,6 +102,9 @@ const PoolQuoterDashboard = () => {
                         </Container>
                         <Container sx={{ borderRadius: '10px' }}>
                             <LhavaButton onClick={() => handlePageChange("DRIFT/USDC")}>DRIFT/USDC</LhavaButton>
+                        </Container>
+                        <Container sx={{ borderRadius: '10px' }}>
+                            <LhavaButton onClick={() => handlePageChange("SONIC/USDC")}>SONIC/USDC</LhavaButton>
                         </Container>
                     </Grid>
                 </Grid>

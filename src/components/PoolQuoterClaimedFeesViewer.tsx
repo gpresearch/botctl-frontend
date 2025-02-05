@@ -60,8 +60,10 @@ const ClaimedFeesViewer: React.FC = () => {
                 return "USDC";
             case "BZLbGTNCSFfoth2GYDtwr7e4imWzpR5jqcUuGEwr646K":
                 return "IO"
-            case "ESkg5Jjd9b5iCg7GfHT3LrcYtxQ7saCctznpncG4wxuL":
+            case "DriFtupJYLTosbwoN8koMbEYSx54aFAVLddWsbksjwg7":
                 return "DRIFT"
+            case "SonicxvLud67EceaEzCLRnMTBqzYUUYNr93DBkBdDES":
+                return "SONIC"
             default:
                 return address;
         }
@@ -159,6 +161,26 @@ const ClaimedFeesViewer: React.FC = () => {
                 overflow: "hidden",
             }}
         >
+            {/* Filter Buttons */}
+            <ButtonGroup
+                variant="contained"
+                color="primary"
+                sx={{ marginBottom: "1rem", backgroundColor: "#1b1f2a" }}
+            >
+                {Object.keys(timeFilters).map((filter) => (
+                    <Button
+                        key={filter}
+                        onClick={() => applyFilter(filter as TimeFilterKey)}
+                        sx={{
+                            backgroundColor: selectedFilter === filter ? "#3b3b3b" : "#1b1f2a",
+                            "&:hover": { backgroundColor: "#3b3b3b" },
+                        }}
+                    >
+                        {filter.toUpperCase()}
+                    </Button>
+                ))}
+            </ButtonGroup>
+
             {/* Metrics Pane */}
             <Grid container spacing={2} sx={{ marginBottom: "1rem" }}>
                 <Grid size={6}>
@@ -198,26 +220,6 @@ const ClaimedFeesViewer: React.FC = () => {
                     </Paper>
                 </Grid>
             </Grid>
-
-            {/* Filter Buttons */}
-            <ButtonGroup
-                variant="contained"
-                color="primary"
-                sx={{ marginBottom: "1rem", backgroundColor: "#1b1f2a" }}
-            >
-                {Object.keys(timeFilters).map((filter) => (
-                    <Button
-                        key={filter}
-                        onClick={() => applyFilter(filter as TimeFilterKey)}
-                        sx={{
-                            backgroundColor: selectedFilter === filter ? "#3b3b3b" : "#1b1f2a",
-                            "&:hover": { backgroundColor: "#3b3b3b" },
-                        }}
-                    >
-                        {filter.toUpperCase()}
-                    </Button>
-                ))}
-            </ButtonGroup>
 
             {/* Table */}
             <Typography

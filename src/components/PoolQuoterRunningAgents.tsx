@@ -53,7 +53,6 @@ const ProcessManagerTable: React.FC = () => {
         fetchProcesses();
     }, []);
 
-    /*
     const deleteProcess = async (pid: number) => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/delete/processes/${pid}`, {
@@ -69,7 +68,6 @@ const ProcessManagerTable: React.FC = () => {
             setError(`Error deleting process: ${error}`);
         }
     };
-     */
 
     if (loading) {
         return <CircularProgress />;
@@ -107,7 +105,7 @@ const ProcessManagerTable: React.FC = () => {
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Status</TableCell>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Start Time</TableCell>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Action</TableCell>
-                        {/*<TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Delete</TableCell>*/}
+                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Delete</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -128,8 +126,6 @@ const ProcessManagerTable: React.FC = () => {
                                     Kill
                                 </Button>
                             </TableCell>
-                            {
-                                /*
                             <TableCell>
                                 <Button
                                     variant="contained"
@@ -139,8 +135,6 @@ const ProcessManagerTable: React.FC = () => {
                                     Delete
                                 </Button>
                             </TableCell>
-                            */
-                            }
                         </TableRow>
                     ))}
                 </TableBody>
