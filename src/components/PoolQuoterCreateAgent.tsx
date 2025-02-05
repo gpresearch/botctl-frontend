@@ -1,8 +1,6 @@
 import { ChangeEvent, useState } from 'react';
-import { Container, ContainerProps, styled, TextField, Alert, AlertTitle } from "@mui/material";
+import { Container, ContainerProps, styled, TextField, Alert, AlertTitle, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import LhavaButton from "./LhavaButton.tsx";
 
 const LhavaForm = styled(Container)<ContainerProps>(({ theme }) => ({
@@ -22,6 +20,13 @@ const LhavaForm = styled(Container)<ContainerProps>(({ theme }) => ({
         boxShadow: '0 0 2px #af3df5',
     },
 }));
+
+const POOL_MAPPING: Record<string, { pool_address: string; base: string; counter: string }> = {
+    "TNSR/USDC": { pool_address: "EZwNTDiGdT1W56wXWvU5NH2PUSJ21bPmQrRuzTmPyibu", base: "TNSR", counter: "USDC" },
+    "DRIFT/USDC": { pool_address: "ESkg5Jjd9b5iCg7GfHT3LrcYtxQ7saCctznpncG4wxuL", base: "DRIFT", counter: "USDC" },
+    "USDC/IO": { pool_address: "CgpsWVsCJBPtt2Qv2Xevnbb38vcimefH5egDRZSwF9HD", base: "USDC", counter: "IO" },
+    "SONIC/USDC": { pool_address: "5LhUQbRDTzgL6RJd3ecgu62wsve71LnWY59seXxBrMqw", base: "SONIC", counter: "USDC" },
+};
 
 const PoolQuoterCreateAgent = () => {
     const [pool, setPool] = useState('');
@@ -82,17 +87,25 @@ const PoolQuoterCreateAgent = () => {
     const createAgent = async () => {
         if (!validateInput()) return;
 
+        // Derive base, counter, and pool_address from the selected pool
+        const { base, counter, pool_address } = POOL_MAPPING[pool] || {};
+
         try {
+            const body = JSON.stringify({
+                base: base,
+                counter: counter,
+                pool: pool,
+                pool_address: pool_address,
+                strategy: strategy,
+                notional_usd: Number(notionalUSD),
+                pct_spot: Number(pctSpot),
+                price_deviation_pct: Number(priceDeviation),
+            })
+
             const response = await fetch(`${API_BASE_URL}/api/create-agent`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    pool,
-                    strategy,
-                    notional_usd: Number(notionalUSD),
-                    pct_spot: Number(pctSpot),
-                    price_deviation_pct: Number(priceDeviation),
-                }),
+                body: body,
             });
 
             if (!response.ok) {
@@ -135,10 +148,9 @@ const PoolQuoterCreateAgent = () => {
                             sx={{ width: '80%', color: 'white', fontWeight: 'bold', backgroundColor: '#1e212b' }}
                         >
                             <MenuItem value=""><em>None</em></MenuItem>
-                            <MenuItem value="TNSR/USDC">TNSR/USDC</MenuItem>
-                            <MenuItem value="USDC/IO">USDC/IO</MenuItem>
-                            <MenuItem value="DRIFT/USDC">DRIFT/USDC</MenuItem>
-                            <MenuItem value="SONIC/USDC">SONIC/USDC</MenuItem>
+                            {Object.keys(POOL_MAPPING).map((poolName) => (
+                                <MenuItem key={poolName} value={poolName}>{poolName}</MenuItem>
+                            ))}
                         </Select>
                     </Grid>
 
