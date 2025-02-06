@@ -15,6 +15,7 @@ import {
     ButtonGroup,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
+import TotalFeesByToken from "./PoolQuoterTotalFeesByToken.tsx";
 
 interface Fee {
     tx_hash: string;
@@ -198,26 +199,9 @@ const ClaimedFeesViewer: React.FC = () => {
                     </Paper>
                 </Grid>
                 <Grid size={6}>
-                    <Paper
-                        sx={{
-                            padding: "1rem",
-                            backgroundColor: "#1b1f2a",
-                            borderRadius: "10px",
-                            color: "white",
-                            fontWeight: "bold",
-                        }}
-                    >
-                        <div>Total Fees by Token</div>
-                        <Grid container spacing={2}>
-                            {Object.entries(metrics.totalFeesByMint).map(([mint, total]) => (
-                                <Grid size={12} key={mint}>
-                                    <div style={{fontSize: '24px'}}>
-                                        <span style={{fontSize: '14px'}}>{convertAddressToSymbol(mint)}:</span> {total.toFixed(3)}
-                                    </div>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Paper>
+                    <Grid item xs={12} md={6}>
+                        <TotalFeesByToken feesByMint={metrics.totalFeesByMint} convertAddressToSymbol={convertAddressToSymbol} />
+                    </Grid>
                 </Grid>
             </Grid>
 
@@ -227,12 +211,12 @@ const ClaimedFeesViewer: React.FC = () => {
                 gutterBottom
                 sx={{
                     color: "white",
-                    fontWeight: "bold",
+                    fontWeight: "600",
                     marginBottom: "1rem",
                     textAlign: "left",
                 }}
             >
-                Claimed Fees
+                Claimed Fees History
             </Typography>
             <TableContainer
                 component={Paper}

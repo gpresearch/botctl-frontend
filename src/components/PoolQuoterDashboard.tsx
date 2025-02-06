@@ -9,6 +9,7 @@ import PoolQuoterLogViewer from "./PoolQuoterLogViewer.tsx";
 import Box from "@mui/material/Box";
 import StatusIcon from "./PoolQuoterStatusIcon.tsx";
 import ClaimedFeesViewer from "./PoolQuoterClaimedFeesViewer.tsx";
+import PriceMonitor from "./PoolQuoterPriceMonitor.tsx";
 
 
 const PoolQuoterDashboard = () => {
@@ -26,6 +27,9 @@ const PoolQuoterDashboard = () => {
                     <Grid container spacing={2}>
                         <Grid size={12}>
                             <PoolQuoterRunningAgents />
+                        </Grid>
+                        <Grid size={12} sx={{  textAlign: "left", color: 'white' }}>
+                            <PriceMonitor/>
                         </Grid>
                         <Grid size={12} sx={{  textAlign: "left", color: 'white' }}>
                             <ClaimedFeesViewer/>
