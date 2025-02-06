@@ -52,7 +52,7 @@ const PoolQuoterDashboard = () => {
                 return <PoolQuoterCreateAgent/>;
             default:
                 return (
-                    <Grid>
+                    <Grid container>
                         <Grid size={12}>
                             <PoolQuoterBinData tokenPair={currentPage} />
                         </Grid>

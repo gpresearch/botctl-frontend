@@ -199,7 +199,7 @@ const ClaimedFeesViewer: React.FC = () => {
                     </Paper>
                 </Grid>
                 <Grid size={6}>
-                    <Grid item xs={12} md={6}>
+                    <Grid size={12}>
                         <TotalFeesByToken feesByMint={metrics.totalFeesByMint} convertAddressToSymbol={convertAddressToSymbol} />
                     </Grid>
                 </Grid>
