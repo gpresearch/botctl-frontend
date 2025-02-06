@@ -54,7 +54,6 @@ export function CreateBotForm({ onBotCreated }: CreateBotFormProps) {
         type: strategyType,
         config: config
       };
-      console.log(botConfig);
       await createBot(botConfig);
       onBotCreated();
     } catch (error) {

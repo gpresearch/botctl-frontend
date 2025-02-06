@@ -24,7 +24,6 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
 
   useEffect(() => {
     const fetchBots = async () => {
-        console.log("Feting bots");
       const activeBots = await getActiveBots();
       setBots(activeBots);
     };

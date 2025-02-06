@@ -59,7 +59,6 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
         } catch (err: unknown) {
             setBinData(null)
             setLoading(false);
-            console.log(err)
             setError((err as Error).message);
             setSnackbarOpen(true);
         } finally {
