@@ -80,7 +80,7 @@ const PoolQuoterDashboard = () => {
                 </Grid>
             </Grid>
             <Grid container spacing={2}>
-                <Grid size={2} sx={{ flexGrow: 1, color: 'white', textAlign: 'center' }}>
+                <Grid size={{xs: 1, md: 2}} sx={{ flexGrow: 1, color: 'white', textAlign: 'center' }}>
                     <Grid container spacing={2}>
                         <Container>
                             <div style={{textAlign: "center", fontSize: 12, textDecoration: 'underline', fontWeight: 'bold'}}>
