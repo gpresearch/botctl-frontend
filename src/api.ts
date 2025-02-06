@@ -1,8 +1,8 @@
-import { BotConfig, Bot, Order, ExchangeNames } from './types';
+import { BotConfigReq, BotResp, FrontendOrder, SupportedExchangeNames, PoolQuoterResp, SupportedSubaccounts, ExchangeInstrument } from './types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';; // Adjust this to match your backend URL
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';; // Adjust this to match your backend URL
 
-export async function createBot(config: BotConfig): Promise<string> {
+export async function createBot(config: BotConfigReq): Promise<string> {
   const response = await fetch(`${API_BASE_URL}/create`, {
     method: 'POST',
     headers: {
@@ -19,8 +19,8 @@ export async function createBot(config: BotConfig): Promise<string> {
   return data.bot_id;
 }
 
-export async function getActiveBots(): Promise<Bot[]> {
-    console.log("Getting actie bots");
+export async function getActiveBots(): Promise<BotResp[]> {
+    console.log("Getting active bots at", API_BASE_URL);
     const response = await fetch(`${API_BASE_URL}/active_bots`);
     
     if (!response.ok) {
@@ -48,7 +48,7 @@ export interface ModifyBotParams {
   value: number;
 }
 
-export async function modifyBot(botId: string, params: ModifyBotParams): Promise<void> {
+export async function modifyBot(botId: string, config: BotConfigReq): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/modify`, {
     method: 'POST',
     headers: {
@@ -56,7 +56,7 @@ export async function modifyBot(botId: string, params: ModifyBotParams): Promise
     },
     body: JSON.stringify({
       bot_id: botId,
-      ...params,
+      config: config,
     }),
   });
 
@@ -65,7 +65,7 @@ export async function modifyBot(botId: string, params: ModifyBotParams): Promise
   }
 }
 
-export async function getOpenOrders(exchange: ExchangeNames, base: string, counter: string): Promise<Order[]> {
+export async function getOpenOrders(exchange: SupportedExchangeNames, base: string, counter: string): Promise<FrontendOrder[]> {
   const response = await fetch(
     `${API_BASE_URL}/open_orders?exchange=${exchange}&base=${base}&counter=${counter}`
   );
@@ -74,5 +74,42 @@ export async function getOpenOrders(exchange: ExchangeNames, base: string, count
     throw new Error('Failed to get open orders');
   }
 
+  return response.json();
+}
+
+export async function getActivePoolQuoters(): Promise<PoolQuoterResp[]> {
+  console.log("Getting active pool quoters at", API_BASE_URL);
+  const response = await fetch(`${API_BASE_URL}/active_pool_quoters`);
+  
+  if (!response.ok) {
+    throw new Error('Failed to get pool quoter status');
+  }
+  return response.json();
+}
+
+interface GetPositionRequest {
+  subaccount: SupportedSubaccounts;
+  exchange_instrument: ExchangeInstrument
+}
+
+interface GetPositionResponse {
+  position: number | null;
+}
+
+export async function getPosition(request: GetPositionRequest): Promise<GetPositionResponse> {
+  // TODO: Replace with actual API call once backend is ready
+  console.log("sending request", request);
+
+  const response = await fetch(`${API_BASE_URL}/position`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(request),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to get position');
+  }
   return response.json();
 } 

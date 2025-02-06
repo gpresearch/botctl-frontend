@@ -1,6 +1,6 @@
 // Import required dependencies from React and custom types/API functions
 import React, { useState, useEffect } from 'react';
-import { Bot } from '../types';
+import { BotResp } from '../types';
 import { stopBots, getActiveBots, modifyBot } from '../api';
 import './ActiveBots.css';
 
@@ -17,7 +17,7 @@ interface EditableField {
 }
 
 export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
-  const [bots, setBots] = useState<Bot[]>([]);
+  const [bots, setBots] = useState<BotResp[]>([]);
   const [selectedBotIds, setSelectedBotIds] = useState<Set<string>>(new Set());
   const [editingField, setEditingField] = useState<EditableField | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
@@ -25,6 +25,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
   useEffect(() => {
     const fetchBots = async () => {
       const activeBots = await getActiveBots();
+      console.log("Got active bots", activeBots);
       setBots(activeBots);
     };
 
@@ -75,10 +76,11 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
         const bot = bots.find(b => b.id === editingField.id);
         if (!bot) return;
 
+        let updatedConfig = { ...bot.config };
         // Update local state immediately
         setBots(currentBots => currentBots.map(b => {
           if (b.id === editingField.id) {
-            const updatedConfig = { ...b.config };
+            updatedConfig = { ...b.config };
             if (updatedConfig.type === bot.config.type) {
               updatedConfig.config = {
                 ...updatedConfig.config,
@@ -93,12 +95,13 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
           return b;
         }));
 
-        // Send update to backend
-        await modifyBot(editingField.id, {
-          field: editingField.field,
-          value: editingField.value
-        });
-        
+        // Need to update config here bc above setState seems to execute after this function completes.
+        bot.config.config = {
+          ...updatedConfig.config,
+          [editingField.field]: editingField.value
+        };
+  
+        await modifyBot(editingField.id, bot.config);
         setNotification('Updated value sent to bot');
         setEditingField(null);
       } catch (error) {
@@ -110,7 +113,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
     }
   };
 
-  const renderEditableField = (bot: Bot, field: string) => {
+  const renderEditableField = (bot: BotResp, field: string) => {
     const isEditing = editingField?.id === bot.id && editingField?.field === field;
     const value = bot.config.config[field as keyof typeof bot.config.config];
 
@@ -143,7 +146,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
     );
   };
 
-  const renderConfigFields = (bot: Bot) => {
+  const renderConfigFields = (bot: BotResp) => {
     const configFields = Object.entries(bot.config.config)
       .filter(([_, value]) => typeof value === 'number')
       .map(([field, _]) => (
@@ -184,6 +187,7 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
                     <th>Strategy</th>
                     <th>Exchange</th>
                     <th>Instrument</th>
+                    <th>Type</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -198,7 +202,8 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
                     <td>{bot.id}</td>
                     <td>{bot.config.type}</td>
                     <td>{bot.config.config.exchange}</td>
-                    <td>{`${bot.config.config.instrument.base}/${bot.config.config.instrument.quote}`}</td>
+                    <td>{`${bot.config.config.exchange_instrument.base}/${bot.config.config.exchange_instrument.counter}`}</td>
+                    <td>{bot.config.config.exchange_instrument.type}</td>
                   </tr>
                 </tbody>
               </table>
@@ -221,7 +226,6 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
                       <th>Price</th>
                       <th>Size</th>
                       <th>Status</th>
-                      <th>Time</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -231,7 +235,6 @@ export function ActiveBots({ botIds, onBotsUpdated }: ActiveBotsProps) {
                         <td>{order.price}</td>
                         <td>{order.size}</td>
                         <td>{order.status}</td>
-                        <td>{new Date(order.timestamp).toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>
