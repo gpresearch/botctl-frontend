@@ -216,3 +216,12 @@ th {
 .form-group input.untouched::placeholder {
   color: #856404;
 }
+
+header {
+  margin-bottom: 0px;
+}
+
+body {
+  font-family: "Manrope", serif;
+  font-optical-sizing: auto;
+}
