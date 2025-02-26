@@ -98,7 +98,7 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
     if (!binData && !loading) {
         return (
             <Container sx={{ textAlign: "center", padding: "2rem", color: "white" }}>
-                <div>No data available for the selected token pair.</div>
+                <div>No data available for {tokenPair}.</div>
             </Container>
         );
     }

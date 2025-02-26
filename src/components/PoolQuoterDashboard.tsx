@@ -10,6 +10,7 @@ import Box from "@mui/material/Box";
 import StatusIcon from "./PoolQuoterStatusIcon.tsx";
 import ClaimedFeesViewer from "./PoolQuoterClaimedFeesViewer.tsx";
 import PriceMonitor from "./PoolQuoterPriceMonitor.tsx";
+import PoolQuoterPositions from "./PoolQuoterPositions.tsx";
 
 
 const PoolQuoterDashboard = () => {
@@ -25,14 +26,8 @@ const PoolQuoterDashboard = () => {
             case "all_pools":
                 return (
                     <Grid container spacing={2}>
-                        <Grid size={12}>
-                            <PoolQuoterRunningAgents />
-                        </Grid>
                         <Grid size={12} sx={{  textAlign: "left", color: 'white' }}>
                             <PriceMonitor/>
-                        </Grid>
-                        <Grid size={12} sx={{  textAlign: "left", color: 'white' }}>
-                            <ClaimedFeesViewer/>
                         </Grid>
                         <Grid size={6}>
                             <PoolQuoterBinData tokenPair={"TNSR/USDC"} />
@@ -45,6 +40,15 @@ const PoolQuoterDashboard = () => {
                         </Grid>
                         <Grid size={6}>
                             <PoolQuoterBinData tokenPair={"SONIC/USDC"} />
+                        </Grid>
+                        <Grid size={12}>
+                            <PoolQuoterRunningAgents />
+                        </Grid>
+                        <Grid size={12}>
+                            <PoolQuoterPositions />
+                        </Grid>
+                        <Grid size={12} sx={{  textAlign: "left", color: 'white' }}>
+                            <ClaimedFeesViewer/>
                         </Grid>
                     </Grid>
                 )
@@ -69,7 +73,7 @@ const PoolQuoterDashboard = () => {
         <Container>
             <Grid container spacing={0}>
                 <Grid size={6} sx={{  textAlign: "left", color: 'white' }}>
-                    <h2 style={{fontFamily: 'Manrope'}}>Pool Quoter (MVP)</h2>
+                    <h2 style={{fontFamily: 'Manrope'}}>Pool Quoter</h2>
                 </Grid>
                 <Grid size={6}>
                     <Box sx={{ padding: '2rem', textAlign: 'right', marginRight: '16px' }}>
