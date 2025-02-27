@@ -28,7 +28,7 @@ const UserPositions: React.FC = () => {
                 setPositions(data);
                 setLoading(false);
             } catch (err) {
-                setError("Failed to fetch positions. Please try again.");
+                setError(`Failed to fetch positions. Please try again: ${err}`);
                 setLoading(false);
             }
         };
@@ -36,12 +36,12 @@ const UserPositions: React.FC = () => {
         fetchPositions();
     }, []);
 
-    const removeLiquidity = async (position_pubkey: string) => {
+    const removeLiquidity = async (symbol: string, position_pubkey: string) => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/remove-liquidity`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ position_pubkey }),
+                body: JSON.stringify({ symbol, position_pubkey }),
             });
 
             if (!response.ok) {
@@ -84,7 +84,7 @@ const UserPositions: React.FC = () => {
                                 <Button
                                     variant="contained"
                                     color="secondary"
-                                    onClick={() => removeLiquidity(position.position_pubkey)}
+                                    onClick={() => removeLiquidity(position.symbol, position.position_pubkey)}
                                 >
                                     Remove Liquidity
                                 </Button>
