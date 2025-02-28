@@ -46,9 +46,13 @@ export default function ButtonAppBar({onPageChange}: ButtonAppBarProps) {
                             </ColorButton>
                         ))}
                     </Box>
-                    <ColorButton onClick={() => onPageChange("login")} color="inherit">
-                        Login
-                    </ColorButton>
+                    {
+                        /*
+                        <ColorButton onClick={() => onPageChange("login")} color="inherit">
+                            Login
+                        </ColorButton>
+                         */
+                    }
                 </Toolbar>
             </AppBar>
         </Box>
