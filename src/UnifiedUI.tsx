@@ -6,7 +6,7 @@ import UnifiedUIDashboard from "./components/UnifiedUIDashboard.tsx";
 import Grid from "@mui/material/Grid2";
 
 const UnifiedUI = () => {
-    const [currentPage, setCurrentPage] = useState("home"); // Default page is "home"
+    const [currentPage, setCurrentPage] = useState("PoolQuoter");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [loginCode, setLoginCode] = useState<string>('');
 
@@ -52,7 +52,7 @@ const UnifiedUI = () => {
                         <Grid container style={{marginTop: '40vh'}}>
                             <Grid size={12} sx={{
                                 textAlign: 'center',
-                                color: 'black',
+                                color: 'white',
                                 fontSize: '18px',
                             }}>
                                 ENTER CODE
@@ -62,7 +62,7 @@ const UnifiedUI = () => {
                                     type="password"
                                     value={loginCode}
                                     onChange={(e) => setLoginCode(e.target.value)}
-                                    placeholder={"[ENTER SUPER SECURE PASSWORD]"}
+                                    placeholder={"[XXXXXXXXXXXXXXXX]"}
                                     style={{
                                         height: "66px",
                                         width: "237px",

@@ -24,7 +24,7 @@ const LhavaForm = styled(Container)<ContainerProps>(({ theme }) => ({
 const POOL_MAPPING: Record<string, { pool_address: string; base: string; counter: string }> = {
     "TNSR/USDC": { pool_address: "EZwNTDiGdT1W56wXWvU5NH2PUSJ21bPmQrRuzTmPyibu", base: "TNSR", counter: "USDC" },
     "DRIFT/USDC": { pool_address: "ESkg5Jjd9b5iCg7GfHT3LrcYtxQ7saCctznpncG4wxuL", base: "DRIFT", counter: "USDC" },
-    "USDC/IO": { pool_address: "CgpsWVsCJBPtt2Qv2Xevnbb38vcimefH5egDRZSwF9HD", base: "USDC", counter: "IO" },
+    "USDC/IO": { pool_address: "67q6kZD6PD29pCvPhMkYSdT6MXJqmkCjeaVNfSYLZ2F2", base: "USDC", counter: "IO" },
     "SONIC/USDC": { pool_address: "5LhUQbRDTzgL6RJd3ecgu62wsve71LnWY59seXxBrMqw", base: "SONIC", counter: "USDC" },
 };
 

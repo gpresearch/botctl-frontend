@@ -11,7 +11,7 @@ import StatusIcon from "./PoolQuoterStatusIcon.tsx";
 import ClaimedFeesViewer from "./PoolQuoterClaimedFeesViewer.tsx";
 import PriceMonitor from "./PoolQuoterPriceMonitor.tsx";
 import PoolQuoterPositions from "./PoolQuoterPositions.tsx";
-
+import PoolQuoterMonitor from "./PoolQuoterMonitor.tsx";
 
 const PoolQuoterDashboard = () => {
     const [currentPage, setCurrentPage] = useState("all_pools"); // Default page is "home"
@@ -29,18 +29,6 @@ const PoolQuoterDashboard = () => {
                         <Grid size={12} sx={{  textAlign: "left", color: 'white' }}>
                             <PriceMonitor/>
                         </Grid>
-                        <Grid size={6}>
-                            <PoolQuoterBinData tokenPair={"TNSR/USDC"} />
-                        </Grid>
-                        <Grid size={6}>
-                            <PoolQuoterBinData tokenPair={"USDC/IO"} />
-                        </Grid>
-                        <Grid size={6}>
-                            <PoolQuoterBinData tokenPair={"DRIFT/USDC"} />
-                        </Grid>
-                        <Grid size={6}>
-                            <PoolQuoterBinData tokenPair={"SONIC/USDC"} />
-                        </Grid>
                         <Grid size={12}>
                             <PoolQuoterRunningAgents />
                         </Grid>
@@ -52,6 +40,8 @@ const PoolQuoterDashboard = () => {
                         </Grid>
                     </Grid>
                 )
+            case "monitor":
+                return <PoolQuoterMonitor />
             case "create_agent":
                 return <PoolQuoterCreateAgent/>;
             default:
@@ -94,6 +84,9 @@ const PoolQuoterDashboard = () => {
                         <Container sx={{ borderRadius: '10px'}}>
                             <LhavaButton onClick={() => handlePageChange("all_pools")}>Dasbhoard</LhavaButton>
                         </Container>
+                        <Container sx={{ borderRadius: '10px'}}>
+                            <LhavaButton onClick={() => handlePageChange("monitor")}>Monitor</LhavaButton>
+                        </Container>
                         <Container sx={{ borderRadius: '10px' }}>
                             <LhavaButton  onClick={() => handlePageChange("create_agent")}>Create Agent</LhavaButton>
                         </Container>
@@ -106,7 +99,7 @@ const PoolQuoterDashboard = () => {
                             <LhavaButton onClick={() => handlePageChange("TNSR/USDC")}>TNSR/USDC</LhavaButton>
                         </Container>
                         <Container sx={{ borderRadius: '10px' }}>
-                            <LhavaButton onClick={() => handlePageChange("USDC/IO")}>IO/USDC</LhavaButton>
+                            <LhavaButton onClick={() => handlePageChange("IO/USDC")}>IO/USDC</LhavaButton>
                         </Container>
                         <Container sx={{ borderRadius: '10px' }}>
                             <LhavaButton onClick={() => handlePageChange("DRIFT/USDC")}>DRIFT/USDC</LhavaButton>

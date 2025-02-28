@@ -6,7 +6,7 @@ import StatusIcon from "./PoolQuoterStatusIcon.tsx";
 const priceFeeds: { name: string; service: string; pair: string }[] = [
     { name: "TNSR/USDC", service: "amm-rs", pair: "TNSRUSDC" },
     { name: "DRIFT/USDC", service: "amm-rs", pair: "DRIFTUSDC" },
-    { name: "USDC/IO", service: "amm-rs", pair: "USDCIO" },
+    { name: "IO/USDC", service: "amm-rs", pair: "IOUSDC" },
     { name: "SONIC/USDC", service: "amm-rs", pair: "SONICUSDC" },
 ];
 

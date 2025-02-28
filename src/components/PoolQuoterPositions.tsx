@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, CircularProgress, Button, Container
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Button, Container
 } from "@mui/material";
 
 interface Position {
@@ -56,7 +56,7 @@ const UserPositions: React.FC = () => {
     };
 
     if (loading) return <CircularProgress />;
-    if (error) return <Typography color="error">{error}</Typography>;
+    if (error) console.log(error);
 
     return (
         <TableContainer component={Paper} sx={{ backgroundColor: "#141626", borderRadius: '1rem', border: '1px solid #282940' }}>
