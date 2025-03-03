@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { Container } from "@mui/material";
 
 const PoolQuoterLog = ({ filename }: { filename: string }) => {
@@ -30,7 +31,7 @@ const PoolQuoterLog = ({ filename }: { filename: string }) => {
         };
 
         return () => {
-            eventSource.close(); // Clean up on component unmount
+            eventSource.close();
         };
     }, [filename]);
 
@@ -44,15 +45,30 @@ const PoolQuoterLog = ({ filename }: { filename: string }) => {
         setIsVisible((prev) => !prev);
     };
 
+    const downloadLog = () => {
+        const downloadUrl = `${API_BASE_URL}/api/logs/download/${filename}`;
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.setAttribute('download', `${filename}.log`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div style={{ padding: '1rem', backgroundColor: '#141626', color: 'white', borderRadius: '10px', position: 'relative' }}>
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Container sx={{ color: "white", textAlign: "left", fontWeight: '600', fontSize: '18px', fontFamily: 'Manrope' }}>
                     Log Stream for {filename}
                 </Container>
-                <IconButton onClick={toggleVisibility} sx={{ color: 'white' }}>
-                    {isVisible ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                </IconButton>
+                <div>
+                    <IconButton onClick={toggleVisibility} sx={{ color: 'white' }}>
+                        {isVisible ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                    </IconButton>
+                    <IconButton onClick={downloadLog} sx={{ color: 'white' }}>
+                        <FileDownloadIcon />
+                    </IconButton>
+                </div>
             </div>
             {isVisible && (
                 <>
