@@ -11,6 +11,9 @@ const PoolQuoterLogMonitor = () => {
                 <PoolQuoterLog filename={"api-server"} />
             </Grid>
             <Grid size={6}>
+                <PoolQuoterLog filename={"alert-runner"} />
+            </Grid>
+            <Grid size={6}>
                 <PoolQuoterLog filename={"dlmm-server"} />
             </Grid>
             <Grid size={6}>

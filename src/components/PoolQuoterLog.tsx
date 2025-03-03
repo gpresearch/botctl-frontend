@@ -7,7 +7,7 @@ import { Container } from "@mui/material";
 const PoolQuoterLog = ({ filename }: { filename: string }) => {
     const [logs, setLogs] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const [isVisible, setIsVisible] = useState<boolean>(true);
+    const [isVisible, setIsVisible] = useState<boolean>(false);
 
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8032';
     const logsEndRef = useRef<HTMLDivElement | null>(null);
