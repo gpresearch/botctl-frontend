@@ -12,6 +12,7 @@ import ClaimedFeesViewer from "./PoolQuoterClaimedFeesViewer.tsx";
 import PriceMonitor from "./PoolQuoterPriceMonitor.tsx";
 import PoolQuoterPositions from "./PoolQuoterPositions.tsx";
 import PoolQuoterMonitor from "./PoolQuoterMonitor.tsx";
+import PoolQuoterLogMonitor from "./PoolQuoterLogMonitor.tsx";
 
 const PoolQuoterDashboard = () => {
     const [currentPage, setCurrentPage] = useState("all_pools"); // Default page is "home"
@@ -42,6 +43,8 @@ const PoolQuoterDashboard = () => {
                 )
             case "monitor":
                 return <PoolQuoterMonitor />
+            case "logs":
+                return <PoolQuoterLogMonitor />
             case "create_agent":
                 return <PoolQuoterCreateAgent/>;
             default:
@@ -88,7 +91,10 @@ const PoolQuoterDashboard = () => {
                             <LhavaButton onClick={() => handlePageChange("monitor")}>Monitor</LhavaButton>
                         </Container>
                         <Container sx={{ borderRadius: '10px' }}>
-                            <LhavaButton  onClick={() => handlePageChange("create_agent")}>Create Agent</LhavaButton>
+                            <LhavaButton  onClick={() => handlePageChange("create_agent")}>Create</LhavaButton>
+                        </Container>
+                        <Container sx={{ borderRadius: '10px' }}>
+                            <LhavaButton  onClick={() => handlePageChange("logs")}>Logs</LhavaButton>
                         </Container>
                         <Container>
                             <div style={{textAlign: "center", fontSize: 12, textDecoration: 'underline', fontWeight: 'bold'}}>
