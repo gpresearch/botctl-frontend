@@ -17,16 +17,16 @@ const PoolQuoterLogMonitor = () => {
                 <PoolQuoterLog filename={"dlmm-server"} />
             </Grid>
             <Grid size={6}>
-                <PoolQuoterLog filename={"pool-monitor-DRIFT-USDC"} />
+                <PoolQuoterLog filename={"pool-monitor-DRIFT"} />
             </Grid>
             <Grid size={6}>
-                <PoolQuoterLog filename={"pool-monitor-TNSR-USDC"} />
+                <PoolQuoterLog filename={"pool-monitor-TNSR"} />
             </Grid>
             <Grid size={6}>
-                <PoolQuoterLog filename={"pool-monitor-IO-USDC"} />
+                <PoolQuoterLog filename={"pool-monitor-IO"} />
             </Grid>
             <Grid size={6}>
-                <PoolQuoterLog filename={"pool-monitor-SONIC-USDC"} />
+                <PoolQuoterLog filename={"pool-monitor-SONIC"} />
             </Grid>
         </Grid>
     );
