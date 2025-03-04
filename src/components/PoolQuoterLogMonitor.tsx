@@ -28,6 +28,9 @@ const PoolQuoterLogMonitor = () => {
             <Grid size={6}>
                 <PoolQuoterLog filename={"pool-monitor-SONIC"} />
             </Grid>
+            <Grid size={6}>
+                <PoolQuoterLog filename={"init"} />
+            </Grid>
         </Grid>
     );
 };
