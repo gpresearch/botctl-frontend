@@ -37,6 +37,10 @@ const UserPositions: React.FC = () => {
     }, []);
 
     const removeLiquidity = async (symbol: string, position_pubkey: string) => {
+        if (!window.confirm(`Are you sure you want to remove liquidity from ${symbol}? This action cannot be undone.`)) {
+            return;
+        }
+
         try {
             const response = await fetch(`${API_BASE_URL}/api/remove-liquidity`, {
                 method: "POST",

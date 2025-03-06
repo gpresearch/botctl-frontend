@@ -14,14 +14,13 @@ import {
 import Button from "@mui/material/Button";
 
 interface ProcessConfig {
-    // Define specific expected fields in the config object.
-    [key: string]: string | number | boolean; // Adjust as per actual data structure
+    [key: string]: string | number | boolean;
 }
 
 interface Process {
     pid: number;
     name: string;
-    config: ProcessConfig; // Use the defined `ProcessConfig` interface
+    config: ProcessConfig;
     status: string;
     start_time: number;
     last_updated: number;
@@ -45,7 +44,7 @@ const ProcessManagerTable: React.FC = () => {
                 setProcesses(data);
                 setLoading(false);
             } catch {
-                setError("Failed to fetch processes. Please try again."); // Removed unused variable
+                setError("Failed to fetch processes. Please try again.");
                 setLoading(false);
             }
         };
@@ -54,6 +53,10 @@ const ProcessManagerTable: React.FC = () => {
     }, []);
 
     const deleteProcess = async (pid: number) => {
+        if (!window.confirm(`Are you sure you want to delete process ${pid}? This does not kill the process and only removes the run entry.`)) {
+            return;
+        }
+
         try {
             const response = await fetch(`${API_BASE_URL}/api/delete/processes/${pid}`, {
                 method: "DELETE",
@@ -69,16 +72,11 @@ const ProcessManagerTable: React.FC = () => {
         }
     };
 
-    if (loading) {
-        return <CircularProgress />;
-    }
-
-    if (error) {
-        return <Typography color="error">{error}</Typography>;
-    }
-
-    // Handle process termination
     const handleKillProcess = async (pid: number) => {
+        if (!window.confirm(`Are you sure you want to kill process ${pid}? This may disrupt ongoing tasks.`)) {
+            return;
+        }
+
         try {
             const response = await fetch(`${API_BASE_URL}/api/processes/${pid}`, {
                 method: "DELETE",
@@ -91,6 +89,14 @@ const ProcessManagerTable: React.FC = () => {
             setError(`Failed to kill process ${pid}. Please try again. ${err}`);
         }
     };
+
+    if (loading) {
+        return <CircularProgress />;
+    }
+
+    if (error) {
+        return <Typography color="error">{error}</Typography>;
+    }
 
     return (
         <TableContainer component={Paper} sx={{ backgroundColor: "#141626", borderRadius: '1rem', border: '1px solid #282940' }}>
