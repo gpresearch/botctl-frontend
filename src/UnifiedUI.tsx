@@ -1,83 +1,76 @@
 import { useState, useEffect } from "react";
-
-import { Box, Container } from "@mui/material";
+import { Box, Container, Button } from "@mui/material";
 import ButtonAppBar from "./components/UnifiedUINavbar.tsx";
 import UnifiedUIDashboard from "./components/UnifiedUIDashboard.tsx";
 import Grid from "@mui/material/Grid2";
+import { useOktaAuth } from "@okta/okta-react";
 
 const UnifiedUI = () => {
     const [currentPage, setCurrentPage] = useState("PoolQuoter");
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [loginCode, setLoginCode] = useState<string>('');
+
+    // Okta authentication hook
+    const { authState, oktaAuth } = useOktaAuth();
 
     useEffect(() => {
-        if (Number(loginCode) == 69800869 || Number(loginCode) == 8081) {
-            setIsLoggedIn(true);
+        if (authState && !authState.isAuthenticated) {
+            // Redirect to Okta login only if we know the user is not logged in
+            oktaAuth.signInWithRedirect();
         }
-    }, [loginCode]);
+    }, [authState, oktaAuth]);
 
-    // Function to handle page change
-    const handlePageChange = (page: string) => {
-        setCurrentPage(page);
-    };
+    // Prevent infinite redirect loop by checking if authState is ready
+    if (!authState) {
+        return (
+            <Grid container style={{ marginTop: '40vh' }}>
+                <Grid size={12} sx={{ textAlign: 'center', color: 'white', fontSize: '18px' }}>
+                    Loading...
+                </Grid>
+            </Grid>
+        );
+    }
+
+    if (!authState.isAuthenticated) {
+        return (
+            <Grid container style={{ marginTop: '40vh' }}>
+                <Grid size={12} sx={{ textAlign: 'center', color: 'white', fontSize: '18px' }}>
+                    Redirecting to login...
+                </Grid>
+            </Grid>
+        );
+    }
 
     return (
-        <div>
-            {/* TODO: Update to use AppTheme / styling */}
-            <Box
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                minHeight: "100vh",
+                width: "100vw",
+                textAlign: "center",
+                backgroundColor: "#0b0f19",
+            }}
+        >
+            <Container
+                disableGutters={true}
+                maxWidth="lg"
                 sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center", // Centers horizontally
-                    minHeight: "100vh", // Full viewport height to center vertically
-                    width: "100vw", // Full viewport height to center vertically
-                    textAlign: "center", // Optional: Center text inside containers
                     backgroundColor: "#0b0f19",
+                    paddingBottom: "2rem",
                 }}
             >
-                {
-                    isLoggedIn ? (
-                            <Container
-                                disableGutters={true}
-                                maxWidth="lg"
-                                sx={{
-                                    backgroundColor: "#0b0f19",
-                                    paddingBottom: "2rem",
-                                }}
-                            >
-                                <ButtonAppBar onPageChange={handlePageChange} />
-                                <UnifiedUIDashboard currentPage={currentPage} />
-                            </Container>
-                    ) : (
-                        <Grid container style={{marginTop: '40vh'}}>
-                            <Grid size={12} sx={{
-                                textAlign: 'center',
-                                color: 'white',
-                                fontSize: '18px',
-                            }}>
-                                ENTER CODE
-                            </Grid>
-                            <Grid size={12} sx={{textAlign: 'center', color: 'black', paddingTop: '12px'}}>
-                                <input
-                                    type="password"
-                                    value={loginCode}
-                                    onChange={(e) => setLoginCode(e.target.value)}
-                                    placeholder={"[XXXXXXXXXXXXXXXX]"}
-                                    style={{
-                                        height: "66px",
-                                        width: "237px",
-                                        backgroundColor: '#E4E4E4',
-                                        border: '1px solid grey',
-                                        textAlign: 'center',
-                                        fontSize: '12px'
-                                    }}
-                                />
-                            </Grid>
-                        </Grid>
-                    )
-                }
-            </Box>
-        </div>
+                <ButtonAppBar onPageChange={setCurrentPage} />
+                <UnifiedUIDashboard currentPage={currentPage} />
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    sx={{ marginTop: "1rem" }}
+                    onClick={() => oktaAuth.signOut()}
+                >
+                    Logout
+                </Button>
+            </Container>
+        </Box>
     );
 };
 
