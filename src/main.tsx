@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import App from './App.tsx';
 import UnifiedUI from './UnifiedUI.tsx';
-import { Security, LoginCallback } from '@okta/okta-react';
+import { Security } from '@okta/okta-react';
 import { OktaAuth } from '@okta/okta-auth-js';
 import oktaConfig from './oktaConfig';
 
@@ -23,7 +23,6 @@ const AppWrapper = () => {
     return (
         <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
             <Routes>
-                <Route path="/login/callback" element={<LoginCallback />} />
                 <Route path="/*" element={devMode ? <UnifiedUI /> : <App />} />
             </Routes>
         </Security>
