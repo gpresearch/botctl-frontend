@@ -12,8 +12,7 @@ const UnifiedUI = () => {
     const { authState, oktaAuth } = useOktaAuth();
 
     useEffect(() => {
-        if (authState && !authState.isAuthenticated) {
-            // Redirect to Okta login only if we know the user is not logged in
+        if (authState && !authState.isAuthenticated && !authState.isPending) {
             oktaAuth.signInWithRedirect();
         }
     }, [authState, oktaAuth]);
