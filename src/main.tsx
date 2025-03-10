@@ -1,5 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import './index.css'
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import UnifiedUI from "./UnifiedUI.tsx";
 import { Security } from "@okta/okta-react";
