@@ -9,26 +9,30 @@ const UnifiedUI = () => {
     const [currentPage, setCurrentPage] = useState("PoolQuoter");
     const { authState, oktaAuth } = useOktaAuth();
 
+    // Login function (no redirects)
+    const handleLogin = async () => {
+        try {
+            const transaction = await oktaAuth.signIn({
+                username: "your-email@example.com", // Replace with user input
+                password: "your-password", // Replace with user input
+            });
+
+            if (transaction.status === "SUCCESS") {
+                await oktaAuth.token.getWithoutPrompt();
+                console.log("Login successful!", transaction.sessionToken);
+            } else {
+                console.error("Login failed:", transaction);
+            }
+        } catch (error) {
+            console.error("Error logging in:", error);
+        }
+    };
+
     useEffect(() => {
         console.log("AuthState at Start:", authState);
-
-        if (!authState) {
-            console.log("AuthState is still null... waiting for Okta.");
-            return;
-        }
-
-        if (authState.isPending) {
-            console.log("AuthState is pending...");
-            return;
-        }
-
-        if (!authState.isAuthenticated) {
-            console.log("User not authenticated, showing login button.");
-        } else {
-            console.log("User authenticated! Showing UI.");
-        }
     }, [authState]);
 
+    // Show loading while checking auth
     if (!authState || authState.isPending) {
         return (
             <Grid container style={{ marginTop: "40vh" }}>
@@ -39,11 +43,12 @@ const UnifiedUI = () => {
         );
     }
 
+    // Show login button if not authenticated (No redirect)
     if (!authState.isAuthenticated) {
         return (
             <Grid container style={{ marginTop: "40vh" }}>
                 <Grid size={12} sx={{ textAlign: "center", color: "white", fontSize: "18px" }}>
-                    <Button variant="contained" color="primary" onClick={() => oktaAuth.signInWithRedirect()}>
+                    <Button variant="contained" color="primary" onClick={handleLogin}>
                         Login
                     </Button>
                 </Grid>
@@ -51,6 +56,7 @@ const UnifiedUI = () => {
         );
     }
 
+    // Show the full UI once authenticated
     return (
         <Box
             sx={{
