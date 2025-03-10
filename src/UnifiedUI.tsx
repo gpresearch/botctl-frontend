@@ -9,15 +9,26 @@ const UnifiedUI = () => {
     const [currentPage, setCurrentPage] = useState("PoolQuoter");
     const { authState, oktaAuth } = useOktaAuth();
 
-    const handleLogin = async () => {
-        await oktaAuth.signInWithRedirect(); // Redirect only on button click
-    };
-
     useEffect(() => {
-        console.log("Auth State:", authState);
+        console.log("AuthState at Start:", authState);
+
+        if (!authState) {
+            console.log("AuthState is still null... waiting for Okta.");
+            return;
+        }
+
+        if (authState.isPending) {
+            console.log("AuthState is pending...");
+            return;
+        }
+
+        if (!authState.isAuthenticated) {
+            console.log("User not authenticated, showing login button.");
+        } else {
+            console.log("User authenticated! Showing UI.");
+        }
     }, [authState]);
 
-    // Show loading while checking auth
     if (!authState || authState.isPending) {
         return (
             <Grid container style={{ marginTop: "40vh" }}>
@@ -28,12 +39,11 @@ const UnifiedUI = () => {
         );
     }
 
-    // Show login button if not authenticated (No auto-redirect)
     if (!authState.isAuthenticated) {
         return (
             <Grid container style={{ marginTop: "40vh" }}>
                 <Grid size={12} sx={{ textAlign: "center", color: "white", fontSize: "18px" }}>
-                    <Button variant="contained" color="primary" onClick={handleLogin}>
+                    <Button variant="contained" color="primary" onClick={() => oktaAuth.signInWithRedirect()}>
                         Login
                     </Button>
                 </Grid>
@@ -41,7 +51,6 @@ const UnifiedUI = () => {
         );
     }
 
-    // Show the full UI once authenticated
     return (
         <Box
             sx={{
