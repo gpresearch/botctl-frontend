@@ -12,13 +12,18 @@ const UnifiedUI = () => {
     const { authState, oktaAuth } = useOktaAuth();
 
     useEffect(() => {
-        if (authState && !authState.isAuthenticated && !authState.isPending) {
+        if (authState === null || authState?.isPending) {
+            console.log("auth state still loading...");
+            return; // Don't attempt redirect if authState is still loading
+        }
+
+        if (!authState.isAuthenticated) {
             oktaAuth.signInWithRedirect();
         }
     }, [authState, oktaAuth]);
 
-    // Prevent infinite redirect loop by checking if authState is ready
-    if (!authState) {
+    // Show loading state while authState is initializing
+    if (!authState || authState.isPending) {
         return (
             <Grid container style={{ marginTop: '40vh' }}>
                 <Grid size={12} sx={{ textAlign: 'center', color: 'white', fontSize: '18px' }}>
