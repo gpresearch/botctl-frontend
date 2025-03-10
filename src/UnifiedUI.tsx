@@ -9,23 +9,8 @@ const UnifiedUI = () => {
     const [currentPage, setCurrentPage] = useState("PoolQuoter");
     const { authState, oktaAuth } = useOktaAuth();
 
-    // Login function (no redirects)
     const handleLogin = async () => {
-        try {
-            const transaction = await oktaAuth.signIn({
-                username: "your-email@example.com", // Replace with user input
-                password: "your-password", // Replace with user input
-            });
-
-            if (transaction.status === "SUCCESS") {
-                await oktaAuth.token.getWithoutPrompt();
-                console.log("Login successful!", transaction.sessionToken);
-            } else {
-                console.error("Login failed:", transaction);
-            }
-        } catch (error) {
-            console.error("Error logging in:", error);
-        }
+        await oktaAuth.signInWithRedirect();
     };
 
     useEffect(() => {
@@ -43,7 +28,7 @@ const UnifiedUI = () => {
         );
     }
 
-    // Show login button if not authenticated (No redirect)
+    // Show login button if not authenticated (Uses Okta-hosted login page)
     if (!authState.isAuthenticated) {
         return (
             <Grid container style={{ marginTop: "40vh" }}>
