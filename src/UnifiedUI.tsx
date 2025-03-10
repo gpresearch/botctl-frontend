@@ -7,42 +7,41 @@ import { useOktaAuth } from "@okta/okta-react";
 
 const UnifiedUI = () => {
     const [currentPage, setCurrentPage] = useState("PoolQuoter");
-
-    // Okta authentication hook
     const { authState, oktaAuth } = useOktaAuth();
 
+    const handleLogin = async () => {
+        await oktaAuth.signInWithRedirect(); // Redirect only on button click
+    };
+
     useEffect(() => {
-        if (authState === null || authState?.isPending) {
-            console.log("auth state still loading...");
-            return; // Don't attempt redirect if authState is still loading
-        }
+        console.log("Auth State:", authState);
+    }, [authState]);
 
-        if (!authState.isAuthenticated) {
-            oktaAuth.signInWithRedirect();
-        }
-    }, [authState, oktaAuth]);
-
-    // Show loading state while authState is initializing
+    // Show loading while checking auth
     if (!authState || authState.isPending) {
         return (
-            <Grid container style={{ marginTop: '40vh' }}>
-                <Grid size={12} sx={{ textAlign: 'center', color: 'white', fontSize: '18px' }}>
+            <Grid container style={{ marginTop: "40vh" }}>
+                <Grid size={12} sx={{ textAlign: "center", color: "white", fontSize: "18px" }}>
                     Loading...
                 </Grid>
             </Grid>
         );
     }
 
+    // Show login button if not authenticated (No auto-redirect)
     if (!authState.isAuthenticated) {
         return (
-            <Grid container style={{ marginTop: '40vh' }}>
-                <Grid size={12} sx={{ textAlign: 'center', color: 'white', fontSize: '18px' }}>
-                    Redirecting to login...
+            <Grid container style={{ marginTop: "40vh" }}>
+                <Grid size={12} sx={{ textAlign: "center", color: "white", fontSize: "18px" }}>
+                    <Button variant="contained" color="primary" onClick={handleLogin}>
+                        Login
+                    </Button>
                 </Grid>
             </Grid>
         );
     }
 
+    // Show the full UI once authenticated
     return (
         <Box
             sx={{
