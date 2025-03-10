@@ -5,7 +5,7 @@ const oktaConfig = {
     clientId: '0oa1ukln76jvFnS3e1d8',
     redirectUri: window.location.origin,
     scopes: ['openid', 'profile', 'email'],
-    responseType: ['code'] as OAuthResponseType[],
+    responseType: ['token', 'id_token'] as OAuthResponseType[],
     pkce: false
 };
 
