@@ -6,6 +6,7 @@ import Grid from "@mui/material/Grid2";
 import { useOktaAuth } from "@okta/okta-react";
 import { useLocation } from "react-router-dom";
 import { AccessToken, IDToken } from "@okta/okta-auth-js";
+import oktaConfig from "./oktaConfig.ts";
 
 type TokenData = {
     idToken: string | null;
@@ -52,7 +53,7 @@ const UnifiedUI = () => {
                     idToken: extractedTokens.idToken,
                     claims: { sub: "user-unknown" },
                     issuer: "https://lhava.okta.com/oauth2",
-                    clientId: "0oa1v07fa8xRbg52K1d8",
+                    clientId: oktaConfig.clientId,
                     expiresAt: Math.floor(Date.now() / 1000) + 3600,
                     authorizeUrl: "https://lhava.okta.com/oauth2/default/v1/authorize",
                     scopes: ["openid", "profile", "email"]
@@ -84,7 +85,6 @@ const UnifiedUI = () => {
         );
     }
 
-    // ✅ Show login button if not authenticated & no tokens
     if (!authState.isAuthenticated && (!tokens.idToken || !tokens.accessToken)) {
         return (
             <Grid container style={{ marginTop: "40vh" }}>
