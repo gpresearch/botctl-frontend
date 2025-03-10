@@ -3,6 +3,7 @@ const oktaConfig = {
     clientId: '0oa1ukln76jvFnS3e1d8',
     redirectUri: window.location.origin,  // Changed to "/"
     scopes: ['openid', 'profile', 'email'],
+    responseType: ['token', 'id_token'], // Fix unsupported_response_type error
     pkce: false
 };
 
