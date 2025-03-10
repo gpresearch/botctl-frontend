@@ -5,16 +5,15 @@ import UnifiedUIDashboard from "./components/UnifiedUIDashboard.tsx";
 import Grid from "@mui/material/Grid2";
 import { useOktaAuth } from "@okta/okta-react";
 import { useLocation } from "react-router-dom";
+import { AccessToken, IDToken } from "@okta/okta-auth-js";
 
-// ✅ Define Type for tokens
 type TokenData = {
     idToken: string | null;
     accessToken: string | null;
 };
 
-// ✅ Extracts tokens from the URL hash
 const extractTokensFromUrl = (): TokenData => {
-    const hash = window.location.hash.substring(1); // Get the hash fragment after `#`
+    const hash = window.location.hash.substring(1); // Remove #
     const params = new URLSearchParams(hash);
     const idToken = params.get("id_token");
     const accessToken = params.get("access_token");
@@ -37,11 +36,34 @@ const UnifiedUI = () => {
         if (!tokens.idToken || !tokens.accessToken) {
             const extractedTokens = extractTokensFromUrl();
             if (extractedTokens.idToken && extractedTokens.accessToken) {
-                console.log("Tokens extracted:", extractedTokens);
                 setTokens(extractedTokens);
+
+                const accessTokenObj: AccessToken = {
+                    accessToken: extractedTokens.accessToken,
+                    expiresAt: Math.floor(Date.now() / 1000) + 3600,  // 1-hour expiration
+                    tokenType: "Bearer",
+                    scopes: ["openid", "profile", "email"],
+                    authorizeUrl: "https://lhava.okta.com/oauth2/default/v1/authorize",
+                    userinfoUrl: "https://lhava.okta.com/oauth2/default/v1/userinfo",
+                    claims: { sub: "user-unknown" }
+                };
+
+                const idTokenObj: IDToken = {
+                    idToken: extractedTokens.idToken,
+                    claims: { sub: "user-unknown" },
+                    issuer: "https://lhava.okta.com/oauth2",
+                    clientId: "0oa1v07fa8xRbg52K1d8",
+                    expiresAt: Math.floor(Date.now() / 1000) + 3600,
+                    authorizeUrl: "https://lhava.okta.com/oauth2/default/v1/authorize",
+                    scopes: ["openid", "profile", "email"]
+                };
+
+                oktaAuth.tokenManager.setTokens({ accessToken: accessTokenObj, idToken: idTokenObj });
+
+                oktaAuth.authStateManager.updateAuthState();
             }
         }
-    }, [authState, location, tokens]);
+    }, [authState, location, tokens, oktaAuth]);
 
     const handleLogin = async () => {
         await oktaAuth.signInWithRedirect();
@@ -62,6 +84,7 @@ const UnifiedUI = () => {
         );
     }
 
+    // ✅ Show login button if not authenticated & no tokens
     if (!authState.isAuthenticated && (!tokens.idToken || !tokens.accessToken)) {
         return (
             <Grid container style={{ marginTop: "40vh" }}>
