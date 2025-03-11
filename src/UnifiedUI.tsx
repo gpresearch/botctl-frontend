@@ -7,6 +7,7 @@ import { useOktaAuth } from "@okta/okta-react";
 import { useLocation } from "react-router-dom";
 import { AccessToken, IDToken } from "@okta/okta-auth-js";
 import oktaConfig from "./oktaConfig.ts";
+import LhavaButton from "./components/LhavaButton.tsx";
 
 type TokenData = {
     idToken: string | null;
@@ -41,7 +42,7 @@ const UnifiedUI = () => {
 
                 const accessTokenObj: AccessToken = {
                     accessToken: extractedTokens.accessToken,
-                    expiresAt: Math.floor(Date.now() / 1000) + 3600,  // 1-hour expiration
+                    expiresAt: Math.floor(Date.now() / 1000) + 300,  // 5-minute expiration
                     tokenType: "Bearer",
                     scopes: ["openid", "profile", "email"],
                     authorizeUrl: "https://lhava.okta.com/oauth2/default/v1/authorize",
@@ -54,7 +55,7 @@ const UnifiedUI = () => {
                     claims: { sub: "user-unknown" },
                     issuer: "https://lhava.okta.com/oauth2",
                     clientId: oktaConfig.clientId,
-                    expiresAt: Math.floor(Date.now() / 1000) + 3600,
+                    expiresAt: Math.floor(Date.now() / 1000) + 300,  // 5-minute expiration
                     authorizeUrl: "https://lhava.okta.com/oauth2/default/v1/authorize",
                     scopes: ["openid", "profile", "email"]
                 };
@@ -77,23 +78,47 @@ const UnifiedUI = () => {
 
     if (!authState || authState.isPending) {
         return (
-            <Grid container style={{ marginTop: "40vh" }}>
-                <Grid size={12} sx={{ textAlign: "center", color: "white", fontSize: "18px" }}>
-                    Loading...
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                    width: "100vw",
+                    textAlign: "center",
+                    backgroundColor: "#0b0f19",
+                }}
+            >
+                <Grid container>
+                    <Grid size={12} sx={{ textAlign: "center", color: "white", fontSize: "18px" }}>
+                        Loading...
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Box>
         );
     }
 
     if (!authState.isAuthenticated && (!tokens.idToken || !tokens.accessToken)) {
         return (
-            <Grid container style={{ marginTop: "40vh" }}>
-                <Grid size={12} sx={{ textAlign: "center", color: "white", fontSize: "18px" }}>
-                    <Button variant="contained" color="primary" onClick={handleLogin}>
-                        Login
-                    </Button>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                    width: "100vw",
+                    textAlign: "center",
+                    backgroundColor: "#0b0f19",
+                }}
+            >
+                <Grid container>
+                    <Grid size={12} sx={{ textAlign: "center", marginTop: '40vh' }}>
+                        <LhavaButton variant="contained" color="primary" onClick={handleLogin}>
+                            Login
+                        </LhavaButton>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Box>
         );
     }
 
