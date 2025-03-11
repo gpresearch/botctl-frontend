@@ -14,16 +14,48 @@ type TokenData = {
     accessToken: string | null;
 };
 
+const commonBoxStyles = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    minHeight: "100vh",
+    width: "100vw",
+    textAlign: "center",
+    backgroundColor: "#0b0f19",
+};
+
 const extractTokensFromUrl = (): TokenData => {
-    const hash = window.location.hash.substring(1); // Remove #
+    const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
     const idToken = params.get("id_token");
     const accessToken = params.get("access_token");
 
     window.history.replaceState(null, "", window.location.pathname);
-
     return { idToken, accessToken };
 };
+
+// Okta shared token props
+const tokenBaseProps = {
+    expiresAt: Math.floor(Date.now() / 1000) + 300, // 5-minute expiration
+    authorizeUrl: "https://lhava.okta.com/oauth2/default/v1/authorize",
+    scopes: ["openid", "profile", "email"],
+};
+
+const createAccessToken = (accessToken: string): AccessToken => ({
+    accessToken,
+    tokenType: "Bearer",
+    userinfoUrl: "https://lhava.okta.com/oauth2/default/v1/userinfo",
+    claims: { sub: "user-unknown" },
+    ...tokenBaseProps,
+});
+
+const createIDToken = (idToken: string): IDToken => ({
+    idToken,
+    claims: { sub: "user-unknown" },
+    issuer: "https://lhava.okta.com/oauth2",
+    clientId: oktaConfig.clientId,
+    ...tokenBaseProps,
+});
 
 const UnifiedUI = () => {
     const [currentPage, setCurrentPage] = useState("PoolQuoter");
@@ -33,34 +65,16 @@ const UnifiedUI = () => {
     const location = useLocation();
 
     useEffect(() => {
-        console.log("AuthState at Start:", authState);
-
         if (!tokens.idToken || !tokens.accessToken) {
             const extractedTokens = extractTokensFromUrl();
             if (extractedTokens.idToken && extractedTokens.accessToken) {
                 setTokens(extractedTokens);
 
-                const accessTokenObj: AccessToken = {
-                    accessToken: extractedTokens.accessToken,
-                    expiresAt: Math.floor(Date.now() / 1000) + 300,  // 5-minute expiration
-                    tokenType: "Bearer",
-                    scopes: ["openid", "profile", "email"],
-                    authorizeUrl: "https://lhava.okta.com/oauth2/default/v1/authorize",
-                    userinfoUrl: "https://lhava.okta.com/oauth2/default/v1/userinfo",
-                    claims: { sub: "user-unknown" }
-                };
-
-                const idTokenObj: IDToken = {
-                    idToken: extractedTokens.idToken,
-                    claims: { sub: "user-unknown" },
-                    issuer: "https://lhava.okta.com/oauth2",
-                    clientId: oktaConfig.clientId,
-                    expiresAt: Math.floor(Date.now() / 1000) + 300,  // 5-minute expiration
-                    authorizeUrl: "https://lhava.okta.com/oauth2/default/v1/authorize",
-                    scopes: ["openid", "profile", "email"]
-                };
-
-                oktaAuth.tokenManager.setTokens({ accessToken: accessTokenObj, idToken: idTokenObj });
+                // Create access token meta data
+                oktaAuth.tokenManager.setTokens({
+                    accessToken: createAccessToken(extractedTokens.accessToken),
+                    idToken: createIDToken(extractedTokens.idToken),
+                });
 
                 oktaAuth.authStateManager.updateAuthState();
             }
@@ -78,17 +92,7 @@ const UnifiedUI = () => {
 
     if (!authState || authState.isPending) {
         return (
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    minHeight: "100vh",
-                    width: "100vw",
-                    textAlign: "center",
-                    backgroundColor: "#0b0f19",
-                }}
-            >
+            <Box sx={commonBoxStyles}>
                 <Grid container>
                     <Grid size={12} sx={{ textAlign: "center", color: "white", fontSize: "18px" }}>
                         Loading...
@@ -100,17 +104,7 @@ const UnifiedUI = () => {
 
     if (!authState.isAuthenticated && (!tokens.idToken || !tokens.accessToken)) {
         return (
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    minHeight: "100vh",
-                    width: "100vw",
-                    textAlign: "center",
-                    backgroundColor: "#0b0f19",
-                }}
-            >
+            <Box sx={commonBoxStyles}>
                 <Grid container>
                     <Grid size={12} sx={{ textAlign: "center", marginTop: '40vh' }}>
                         <LhavaButton variant="contained" color="primary" onClick={handleLogin}>
@@ -123,33 +117,11 @@ const UnifiedUI = () => {
     }
 
     return (
-        <Box
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                minHeight: "100vh",
-                width: "100vw",
-                textAlign: "center",
-                backgroundColor: "#0b0f19",
-            }}
-        >
-            <Container
-                disableGutters={true}
-                maxWidth="lg"
-                sx={{
-                    backgroundColor: "#0b0f19",
-                    paddingBottom: "2rem",
-                }}
-            >
+        <Box sx={commonBoxStyles}>
+            <Container disableGutters={true} maxWidth="lg" sx={{ backgroundColor: "#0b0f19", paddingBottom: "2rem" }}>
                 <ButtonAppBar onPageChange={setCurrentPage} />
                 <UnifiedUIDashboard currentPage={currentPage} />
-                <Button
-                    variant="contained"
-                    color="secondary"
-                    sx={{ marginTop: "1rem" }}
-                    onClick={handleLogout}
-                >
+                <Button variant="contained" color="secondary" sx={{ marginTop: "1rem" }} onClick={handleLogout}>
                     Logout
                 </Button>
             </Container>
