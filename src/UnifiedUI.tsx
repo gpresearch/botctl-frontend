@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Box, Container, Button } from "@mui/material";
 import ButtonAppBar from "./components/UnifiedUINavbar.tsx";
 import UnifiedUIDashboard from "./components/UnifiedUIDashboard.tsx";
@@ -63,13 +63,18 @@ const UnifiedUI = () => {
     const [tokens, setTokens] = useState<TokenData>({ idToken: null, accessToken: null });
 
     const location = useLocation();
+    const logoutInitiated = useRef(false);
 
     useEffect(() => {
         const checkTokenExpiration = async () => {
             const storedAccessToken = await oktaAuth.tokenManager.get("accessToken");
+
             if (storedAccessToken && storedAccessToken.expiresAt * 1000 < Date.now()) {
-                console.warn("Token expired. Logging out...");
-                handleLogout();
+                if (!logoutInitiated.current) {
+                    console.warn("Token expired. Logging out...");
+                    logoutInitiated.current = true;
+                    handleLogout();
+                }
             }
         };
 
@@ -80,7 +85,6 @@ const UnifiedUI = () => {
             if (extractedTokens.idToken && extractedTokens.accessToken) {
                 setTokens(extractedTokens);
 
-                // Create access token meta data
                 oktaAuth.tokenManager.setTokens({
                     accessToken: createAccessToken(extractedTokens.accessToken),
                     idToken: createIDToken(extractedTokens.idToken),
@@ -92,10 +96,12 @@ const UnifiedUI = () => {
     }, [authState, location, tokens, oktaAuth]);
 
     const handleLogin = async () => {
+        logoutInitiated.current = false;
         await oktaAuth.signInWithRedirect();
     };
 
     const handleLogout = () => {
+        console.warn("Logging out user...");
         setTokens({ idToken: null, accessToken: null });
         oktaAuth.signOut();
     };
