@@ -65,6 +65,16 @@ const UnifiedUI = () => {
     const location = useLocation();
 
     useEffect(() => {
+        const checkTokenExpiration = async () => {
+            const storedAccessToken = await oktaAuth.tokenManager.get("accessToken");
+            if (storedAccessToken && storedAccessToken.expiresAt * 1000 < Date.now()) {
+                console.warn("Token expired. Logging out...");
+                handleLogout();
+            }
+        };
+
+        checkTokenExpiration();
+
         if (!tokens.idToken || !tokens.accessToken) {
             const extractedTokens = extractTokensFromUrl();
             if (extractedTokens.idToken && extractedTokens.accessToken) {
