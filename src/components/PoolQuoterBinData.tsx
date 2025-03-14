@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import PoolQuoterBinDataChart from "./PoolQuoterBinDataChart.tsx";
 import {Container, Alert, Snackbar, Box} from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import SyncIcon from '@mui/icons-material/Sync';
 import CircularProgress from '@mui/material/CircularProgress';
 import {MakeOptional} from "@mui/x-charts/models/helpers";
 import {BarSeriesType} from "@mui/x-charts/models/seriesType/bar";
@@ -21,8 +20,8 @@ interface BinData {
     bins: Bin[];
     token_x_symbol: string;
     token_y_symbol: string;
-    token_x_base: number;
-    token_y_base: number;
+    token_x_base: [];
+    token_y_base: [];
     total_token_x_usd: number;
     total_token_y_usd: number;
 }
@@ -80,12 +79,6 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
         // Cleanup the interval on component unmount
         return () => clearInterval(interval);
     }, [tokenPair]);
-
-    const handleRefresh = () => {
-        const time = new Date().toLocaleTimeString();
-        setRefreshedAt(time.toString());
-        fetchBinData();
-    };
 
     const handleCloseSnackbar = () => {
         setSnackbarOpen(false);
@@ -220,9 +213,7 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
                             refreshedAt && <Box sx={{fontSize: '8px', float: 'right', position: 'absolute'}}>Refreshed at: {refreshedAt}</Box>
                         }
                         {
-                            !loading ? (
-                                <SyncIcon sx={{float: 'right'}} onClick={handleRefresh} />
-                            ) : (
+                            loading && (
                                 <CircularProgress sx={{float: 'right'}} size="24px"/>
                             )
                         }
@@ -233,6 +224,40 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
                         borderLeft: '1px solid #21252e',
                         borderRight: '1px solid #21252e'
                     }} />
+                </Grid>
+
+                <Grid size={6}>
+                    <Grid container spacing={0} sx={{ flexGrow: 1 }}>
+                        <Grid size={12}>
+                            <div style={{
+                                color: 'grey',
+                                fontSize: 10,
+                                textAlign: 'left',
+                                fontWeight: 'bold',
+                                paddingBottom: '12px'
+                            }}>
+                                Strategy Stats
+                            </div>
+                        </Grid>
+                        <Grid size={12}>
+                            <div style={{
+                                color: 'white',
+                                fontSize: 12,
+                                textAlign: 'left',
+                            }}>
+                                <span>Pct Allocation: <strong>{binData?.strategy_stats?.pct_allocation ? (binData.strategy_stats.pct_allocation * 100).toFixed(2) + '%' : 'N/A'}</strong></span>
+                            </div>
+                        </Grid>
+                        <Grid size={12}>
+                            <div style={{
+                                color: 'white',
+                                fontSize: 12,
+                                textAlign: 'left',
+                            }}>
+                                <span>Pct Deviation: <strong>{binData?.strategy_stats?.pct_deviation ? (binData.strategy_stats.pct_deviation * 100).toFixed(2) + '%' : 'N/A'}</strong></span>
+                            </div>
+                        </Grid>
+                    </Grid>
                 </Grid>
 
                 <Grid size={6}>
@@ -256,7 +281,7 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
                                 fontSize: 12,
                                 fontWeight: 'bold',
                             }}>
-                                {binData?.token_x_symbol} - {binData?.token_x_base} - {formatNumber(binData?.total_token_x_usd || 0)}
+                                {binData?.token_x_symbol} - {formatNumber(binData?.total_token_x_usd || 0)}
                             </div>
                         </Grid>
                         <Grid size={12}>
@@ -267,7 +292,7 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
                                 fontSize: 12,
                                 fontWeight: 'bold',
                             }}>
-                                {binData?.token_y_symbol} - {binData?.token_y_base} - {formatNumber(binData?.total_token_y_usd || 0)}
+                                {binData?.token_y_symbol} - {formatNumber(binData?.total_token_y_usd || 0)}
                             </div>
                         </Grid>
                     </Grid>
