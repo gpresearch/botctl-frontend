@@ -17,6 +17,13 @@ interface ProcessConfig {
     [key: string]: string | number | boolean;
 }
 
+interface StrategyStats {
+    strategy_id: string;
+    pct_allocation: number;
+    pct_deviation: number;
+    total_notional_usd: number;
+}
+
 interface Process {
     pid: number;
     name: string;
@@ -24,7 +31,10 @@ interface Process {
     status: string;
     start_time: number;
     last_updated: number;
+    strategy_id?: string;
+    strategy_stats?: StrategyStats;
 }
+
 
 const ProcessManagerTable: React.FC = () => {
     const [processes, setProcesses] = useState<Process[]>([]);
@@ -52,25 +62,6 @@ const ProcessManagerTable: React.FC = () => {
         fetchProcesses();
     }, []);
 
-    const deleteProcess = async (pid: number) => {
-        if (!window.confirm(`Are you sure you want to delete process ${pid}? This does not kill the process and only removes the run entry.`)) {
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/delete/processes/${pid}`, {
-                method: "DELETE",
-            });
-            if (response.ok) {
-                setProcesses(processes.filter((process) => process.pid !== pid));
-            } else {
-                const errorData = await response.json();
-                setError(`Failed to delete process: ${errorData.detail}`);
-            }
-        } catch (error) {
-            setError(`Error deleting process: ${error}`);
-        }
-    };
 
     const handleKillProcess = async (pid: number) => {
         if (!window.confirm(`Are you sure you want to kill process ${pid}? This may disrupt ongoing tasks.`)) {
@@ -108,10 +99,13 @@ const ProcessManagerTable: React.FC = () => {
                     <TableRow>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940'}}>PID</TableCell>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Name</TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Strategy</TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Notional</TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Pct Allocation</TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Pct Deviation</TableCell>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Status</TableCell>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Start Time</TableCell>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Action</TableCell>
-                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Delete</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -119,6 +113,24 @@ const ProcessManagerTable: React.FC = () => {
                         <TableRow key={process.pid}>
                             <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>{process.pid}</TableCell>
                             <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>{process.name}</TableCell>
+                            <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>
+                                {process.strategy_id ? process.strategy_id : "N/A"}
+                            </TableCell>
+                            <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>
+                                {process.strategy_stats?.pct_allocation !== undefined
+                                    ? `$${(process.strategy_stats.total_notional_usd).toFixed(0)}`
+                                    : "N/A"}
+                            </TableCell>
+                            <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>
+                                {process.strategy_stats?.pct_allocation !== undefined
+                                    ? `${(process.strategy_stats.pct_allocation).toFixed(0)}%`
+                                    : "N/A"}
+                            </TableCell>
+                            <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>
+                                {process.strategy_stats?.pct_deviation !== undefined
+                                    ? `${(process.strategy_stats.pct_deviation).toFixed(2)}%`
+                                    : "N/A"}
+                            </TableCell>
                             <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>{process.status}</TableCell>
                             <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>
                                 {new Date(process.start_time * 1000).toLocaleString()}
@@ -132,20 +144,12 @@ const ProcessManagerTable: React.FC = () => {
                                     Kill
                                 </Button>
                             </TableCell>
-                            <TableCell>
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    onClick={() => deleteProcess(process.pid)}
-                                >
-                                    Delete
-                                </Button>
-                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
         </TableContainer>
+
     );
 };
 
