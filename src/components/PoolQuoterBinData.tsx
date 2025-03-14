@@ -123,7 +123,6 @@ const PoolQuoterBinData = ({ tokenPair }: BinDataViewerProps) => {
     let lowerBinPos: string | null = null;
     let upperBinPos: string | null = null;
 
-    console.log(binData)
     binData?.bins.forEach(bin => {
         if (!lowerBinPos && bin.price >= lowerThreshold) {
             lowerBinPos = bin.bin_pos;
