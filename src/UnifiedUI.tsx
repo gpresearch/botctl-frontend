@@ -5,9 +5,10 @@ import UnifiedUIDashboard from "./components/UnifiedUIDashboard.tsx";
 import Grid from "@mui/material/Grid2";
 import { useOktaAuth } from "@okta/okta-react";
 import { useLocation } from "react-router-dom";
-import { AccessToken, IDToken } from "@okta/okta-auth-js";
+import {AccessToken, IDToken} from "@okta/okta-auth-js";
 import oktaConfig from "./oktaConfig.ts";
 import LhavaButton from "./components/LhavaButton.tsx";
+import {PermissionsProvider} from "./components/PoolQuoterPermissionsContext.tsx";
 
 type TokenData = {
     idToken: string | null;
@@ -36,9 +37,9 @@ const extractTokensFromUrl = (): TokenData => {
 
 // Okta shared token props
 const tokenBaseProps = {
-    expiresAt: Math.floor(Date.now() / 1000) + 300, // 5-minute expiration
+    expiresAt: Math.floor(Date.now() / 1000) + 60, // 1-minute expiration
     authorizeUrl: "https://lhava.okta.com/oauth2/default/v1/authorize",
-    scopes: ["openid", "profile", "email"],
+    scopes: ["groups"],
 };
 
 const createAccessToken = (accessToken: string): AccessToken => ({
@@ -118,13 +119,15 @@ const UnifiedUI = () => {
 
     return (
         <Box sx={commonBoxStyles}>
-            <Container disableGutters={true} maxWidth="lg" sx={{ backgroundColor: "#0b0f19", paddingBottom: "2rem" }}>
-                <ButtonAppBar onPageChange={setCurrentPage} />
-                <UnifiedUIDashboard currentPage={currentPage} />
-                <Button variant="contained" color="secondary" sx={{ marginTop: "1rem" }} onClick={handleLogout}>
-                    Logout
-                </Button>
-            </Container>
+            <PermissionsProvider>
+                <Container disableGutters={true} maxWidth="lg" sx={{ backgroundColor: "#0b0f19", paddingBottom: "2rem" }}>
+                    <ButtonAppBar onPageChange={setCurrentPage} />
+                    <UnifiedUIDashboard currentPage={currentPage} />
+                    <Button variant="contained" color="secondary" sx={{ marginTop: "1rem" }} onClick={handleLogout}>
+                        Logout
+                    </Button>
+                </Container>
+            </PermissionsProvider>
         </Box>
     );
 };
