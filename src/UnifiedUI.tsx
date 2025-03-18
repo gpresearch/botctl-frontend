@@ -37,7 +37,7 @@ const extractTokensFromUrl = (): TokenData => {
 
 // Okta shared token props
 const tokenBaseProps = {
-    expiresAt: Math.floor(Date.now() / 1000) + 60, // 1-minute expiration
+    expiresAt: Math.floor(Date.now() / 1000) + 300, // 5-minute expiration
     authorizeUrl: "https://lhava.okta.com/oauth2/default/v1/authorize",
     scopes: ["groups"],
 };
