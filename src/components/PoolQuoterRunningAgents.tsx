@@ -17,6 +17,13 @@ interface ProcessConfig {
     [key: string]: string | number | boolean;
 }
 
+interface StrategyStats {
+    strategy_id: string;
+    pct_allocation: number;
+    pct_deviation: number;
+    total_notional_usd: number;
+}
+
 interface Process {
     pid: number;
     name: string;
@@ -24,7 +31,10 @@ interface Process {
     status: string;
     start_time: number;
     last_updated: number;
+    strategy_id?: string;
+    strategy_stats?: StrategyStats;
 }
+
 
 const ProcessManagerTable: React.FC = () => {
     const [processes, setProcesses] = useState<Process[]>([]);
@@ -107,7 +117,10 @@ const ProcessManagerTable: React.FC = () => {
                 <TableHead>
                     <TableRow>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940'}}>PID</TableCell>
-                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Name</TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Strategy</TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Notional</TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Pct Allocation</TableCell>
+                        <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Pct Deviation</TableCell>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Status</TableCell>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Start Time</TableCell>
                         <TableCell sx={{ color: "white", fontWeight: "bold", backgroundColor: '#141626', borderBottom: '1px solid #282940' }}>Action</TableCell>
@@ -118,7 +131,24 @@ const ProcessManagerTable: React.FC = () => {
                     {processes.map((process) => (
                         <TableRow key={process.pid}>
                             <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>{process.pid}</TableCell>
-                            <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>{process.name}</TableCell>
+                            <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>
+                                {process.strategy_id ? process.strategy_id : "N/A"}
+                            </TableCell>
+                            <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>
+                                {process.strategy_stats?.pct_allocation !== undefined
+                                    ? `$${(process.strategy_stats.total_notional_usd).toFixed(0)}`
+                                    : "N/A"}
+                            </TableCell>
+                            <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>
+                                {process.strategy_stats?.pct_allocation !== undefined
+                                    ? `${(process.strategy_stats.pct_allocation * 100).toFixed(0)}%`
+                                    : "N/A"}
+                            </TableCell>
+                            <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>
+                                {process.strategy_stats?.pct_deviation !== undefined
+                                    ? `${(process.strategy_stats.pct_deviation * 100).toFixed(2)}%`
+                                    : "N/A"}
+                            </TableCell>
                             <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>{process.status}</TableCell>
                             <TableCell sx={{ color: "white", borderBottom: '1px solid #282940' }}>
                                 {new Date(process.start_time * 1000).toLocaleString()}
@@ -146,6 +176,7 @@ const ProcessManagerTable: React.FC = () => {
                 </TableBody>
             </Table>
         </TableContainer>
+
     );
 };
 
