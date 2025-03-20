@@ -12,8 +12,8 @@ const LhavaButton = styled(Button)<ButtonProps>(({ theme }) => ({
     boxShadow: '0 0 7px rgba(0, 0, 0, 0.0)',
     transition: 'border 0.3s',
     border: '.5px solid #3b3b3b',
-    fontSize: '11px',
-
+    fontSize: '10px',
+    overflow: 'hidden',
     '&:hover': {
         border: '1px solid #af3df5',
         boxShadow: '0 0 2px #af3df5',
