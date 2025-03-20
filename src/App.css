@@ -222,6 +222,6 @@ header {
 }
 
 body {
-  font-family: "Manrope", serif;
+  font-family: "Manrope", serif !important;
   font-optical-sizing: auto;
 }

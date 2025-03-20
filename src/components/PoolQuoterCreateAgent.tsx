@@ -2,6 +2,8 @@ import { ChangeEvent, useState } from 'react';
 import { Container, ContainerProps, styled, TextField, Alert, AlertTitle, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import LhavaButton from "./LhavaButton.tsx";
+import { usePermissions } from "../components/PoolQuoterPermissionsContext.tsx";
+import JurassicParkError from "./JurassicParkError.tsx";
 
 const LhavaForm = styled(Container)<ContainerProps>(({ theme }) => ({
     color: theme.palette.getContrastText('#000124'),
@@ -36,6 +38,8 @@ const PoolQuoterCreateAgent = () => {
     const [priceDeviation, setPriceDeviation] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
+    const [showJurassicError, setShowJurassicError] = useState(false);
+    const permissions = usePermissions();
 
     const handlePoolChange = (event: SelectChangeEvent) => {
         setPool(event.target.value);
@@ -86,6 +90,11 @@ const PoolQuoterCreateAgent = () => {
 
     const createAgent = async () => {
         if (!validateInput()) return;
+
+        if (permissions !== "ADMIN") {
+            setShowJurassicError(true);
+            return;
+        }
 
         // Derive base, counter, and pool_address from the selected pool
         const { base, counter, pool_address } = POOL_MAPPING[pool] || {};
@@ -210,6 +219,8 @@ const PoolQuoterCreateAgent = () => {
                             </Alert>
                         )}
                     </Grid>
+
+                    {showJurassicError && <JurassicParkError onClose={() => setShowJurassicError(false)} />}
 
                     <Grid size={4} sx={{ padding: '1rem' }}>
                         <LhavaButton onClick={createAgent}>Create Agent</LhavaButton>

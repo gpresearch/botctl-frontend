@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Button, Container
 } from "@mui/material";
+import {usePermissions} from "./PoolQuoterPermissionsContext.tsx";
+import JurassicParkError from "./JurassicParkError.tsx";
 
 interface Position {
     symbol: string;
@@ -14,6 +16,8 @@ const UserPositions: React.FC = () => {
     const [positions, setPositions] = useState<Position[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
+    const [showJurassicError, setShowJurassicError] = useState(false);
+    const permissions = usePermissions();
 
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8032';
 
@@ -41,6 +45,11 @@ const UserPositions: React.FC = () => {
             return;
         }
 
+        if (permissions !== "ADMIN") {
+            setShowJurassicError(true);
+            return;
+        }
+
         try {
             const response = await fetch(`${API_BASE_URL}/api/remove-liquidity`, {
                 method: "POST",
@@ -60,6 +69,7 @@ const UserPositions: React.FC = () => {
     };
 
     if (loading) return <CircularProgress />;
+    if (showJurassicError) return <JurassicParkError onClose={() => setShowJurassicError(false)} />
     if (error) console.log(error);
 
     return (
